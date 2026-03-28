@@ -50,7 +50,7 @@ const Checkout = () => {
 
         try {
             // 1. Create order on our backend
-            const res = await fetch("http://localhost:5000/create-order", {
+            const res = await fetch("https://sheerazi-carpets.onrender.com/create-order", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ amount: cartTotal, currency: "INR" })
@@ -62,7 +62,7 @@ const Checkout = () => {
             if (data.isMock) {
                 // If using placeholder keys, bypass the real Razorpay popup to prevent crashes
                 console.log("[Mock Mode] Simulating successful payment because you are using placeholder keys.");
-                const verifyRes = await fetch("http://localhost:5000/verify-payment", {
+                const verifyRes = await fetch("https://sheerazi-carpets.onrender.com/verify-payment", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ isMock: true }) /* automatically verifies in mock mode */
@@ -87,7 +87,7 @@ const Checkout = () => {
                     setIsProcessing(true); // resume loading state
                     try {
                         // 3. Verify Payment Signature securely on Backend
-                        const verifyRes = await fetch("http://localhost:5000/verify-payment", {
+                        const verifyRes = await fetch("https://sheerazi-carpets.onrender.com/verify-payment", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({
