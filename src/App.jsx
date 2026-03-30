@@ -10,16 +10,20 @@ import AdminLogin from './pages/AdminLogin';
 import ProtectedRoute from './components/ProtectedRoute';
 import CartDrawer from './components/CartDrawer';
 import { AuthProvider } from './context/AuthContext';
+import { ProductProvider } from './context/ProductContext';
+import Shop from './pages/Shop';
 
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <div className="app-container" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <ProductProvider>
+        <Router>
+          <div className="app-container" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
           <Navbar />
           <main style={{ flex: 1 }}>
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/shop" element={<Shop />} />
               <Route path="/product/:id" element={<ProductDetails />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/admin-login" element={<AdminLogin />} />
@@ -34,6 +38,7 @@ function App() {
           <CartDrawer />
         </div>
       </Router>
+      </ProductProvider>
     </AuthProvider>
   );
 }

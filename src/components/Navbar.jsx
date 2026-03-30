@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, Search, User, ShoppingBag, MapPin, Phone } from 'lucide-react';
+import { Menu, Search, User, ShoppingBag, MapPin, Phone, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 
@@ -44,6 +44,57 @@ const Navbar = () => {
           </div>
         </div>
       </nav>
+
+      {/* Mega Menu Navigation */}
+      <div className="mega-menu-bar">
+        <ul className="mega-menu-list">
+            <li className="mega-dropdown">
+                <Link to="/shop" className="mega-link">Shop All <ChevronDown className="mega-icon" /></Link>
+            </li>
+            <li className="mega-dropdown">
+                <span className="mega-link">By Category <ChevronDown className="mega-icon" /></span>
+                <div className="dropdown-content">
+                    <Link to="/shop?category=Hand+Tufted">Hand Tufted Carpets</Link>
+                    <Link to="/shop?category=Shaggy">Shaggy Carpets</Link>
+                    <Link to="/shop?category=Persian+Silk">Persian Silk Carpets</Link>
+                    <Link to="/shop?category=Designer">Designer Carpets</Link>
+                    <Link to="/shop?category=Contemporary">Contemporary</Link>
+                </div>
+            </li>
+            <li className="mega-dropdown">
+                <span className="mega-link">By Size <ChevronDown className="mega-icon" /></span>
+                <div className="dropdown-content">
+                    <Link to="/shop?size=3x5+ft">3x5 ft</Link>
+                    <Link to="/shop?size=4x6+ft">4x6 ft</Link>
+                    <Link to="/shop?size=5x7+ft">5x7 ft</Link>
+                    <Link to="/shop?size=5x8+ft">5x8 ft</Link>
+                    <Link to="/shop?size=6x9+ft">6x9 ft</Link>
+                    <Link to="/shop?size=8x10+ft">8x10 ft</Link>
+                    <Link to="/shop?size=9x12+ft">9x12 ft</Link>
+                </div>
+            </li>
+            <li className="mega-dropdown">
+                <span className="mega-link">By Color <ChevronDown className="mega-icon" /></span>
+                <div className="dropdown-content color-grid">
+                    <Link to="/shop?color=Red">Red</Link>
+                    <Link to="/shop?color=Blue">Blue</Link>
+                    <Link to="/shop?color=Beige">Beige</Link>
+                    <Link to="/shop?color=Black">Black</Link>
+                    <Link to="/shop?color=Green">Green</Link>
+                    <Link to="/shop?color=White">White</Link>
+                    <Link to="/shop?color=Grey">Grey</Link>
+                </div>
+            </li>
+            <li className="mega-dropdown">
+                <span className="mega-link">By Shape <ChevronDown className="mega-icon" /></span>
+                <div className="dropdown-content">
+                    <Link to="/shop?shape=Rectangular">Rectangular</Link>
+                    <Link to="/shop?shape=Round">Round</Link>
+                    <Link to="/shop?shape=Irregular">Irregular</Link>
+                </div>
+            </li>
+        </ul>
+      </div>
 
       <style>{`
         .navbar-container {
@@ -123,6 +174,90 @@ const Navbar = () => {
           justify-content: center;
           font-size: 10px;
           font-weight: bold;
+        }
+
+        /* Mega Menu Styles */
+        .mega-menu-bar {
+          background-color: var(--white);
+          border-bottom: 1px solid var(--border-color);
+          display: none; /* hidden on small screens */
+        }
+        @media (min-width: 768px) {
+          .mega-menu-bar {
+            display: block;
+          }
+        }
+        .mega-menu-list {
+          list-style: none;
+          display: flex;
+          justify-content: center;
+          margin: 0;
+          padding: 0;
+          gap: 30px;
+        }
+        .mega-dropdown {
+          position: relative;
+        }
+        .mega-link {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          padding: 15px 10px;
+          font-weight: 500;
+          color: var(--text-dark);
+          text-decoration: none;
+          cursor: pointer;
+          font-size: 0.95rem;
+          transition: 0.2s;
+        }
+        .mega-link:hover {
+          color: var(--primary);
+        }
+        .mega-icon {
+          width: 14px;
+          height: 14px;
+        }
+        .dropdown-content {
+          display: none;
+          position: absolute;
+          top: 100%;
+          left: 50%;
+          transform: translateX(-50%);
+          background-color: var(--white);
+          min-width: 220px;
+          box-shadow: 0px 8px 24px 0px rgba(0,0,0,0.15);
+          z-index: 101;
+          border-radius: 4px;
+          border: 1px solid var(--border-color);
+          overflow: hidden;
+        }
+        .mega-dropdown:hover .dropdown-content {
+          display: block;
+        }
+        .dropdown-content a {
+          color: var(--text-dark);
+          padding: 12px 20px;
+          text-decoration: none;
+          display: block;
+          font-size: 0.9rem;
+          border-bottom: 1px solid #f1f1f1;
+        }
+        .dropdown-content a:last-child {
+          border-bottom: none;
+        }
+        .dropdown-content a:hover {
+          background-color: #fafafa;
+          color: var(--primary);
+          padding-left: 24px;
+          transition: 0.3s;
+        }
+        .color-grid {
+          min-width: 300px;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+        }
+        .color-grid a {
+          border-bottom: none;
         }
       `}</style>
     </header>

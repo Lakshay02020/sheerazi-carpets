@@ -4,12 +4,20 @@ import { collection, addDoc } from 'firebase/firestore';
 import { products as mockProducts } from '../data/mockProducts';
 import { useAuth } from '../context/AuthContext';
 
+const AVAILABLE_COLORS = ['Red', 'Blue', 'Beige', 'Black', 'Green', 'White', 'Grey', 'Brown', 'Pink', 'Yellow'];
+const AVAILABLE_SIZES = ['3x5 ft', '4x6 ft', '5x7 ft', '5x8 ft', '6x8 ft', '6x9 ft', '8x10 ft', '9x12 ft'];
+const AVAILABLE_SHAPES = ['Rectangular', 'Round', 'Irregular'];
+
 const AdminAddProduct = () => {
     const [title, setTitle] = useState('');
     const [price, setPrice] = useState('');
     const [originalPrice, setOriginalPrice] = useState('');
     const [category, setCategory] = useState('');
     const [imageUrl, setImageUrl] = useState('');
+    const [shape, setShape] = useState('Rectangular');
+    const [selectedColors, setSelectedColors] = useState([]);
+    const [selectedSizes, setSelectedSizes] = useState([]);
+    
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState('');
     const [isSeeding, setIsSeeding] = useState(false);
@@ -34,6 +42,9 @@ const AdminAddProduct = () => {
                 price: parseFloat(price),
                 originalPrice: originalPrice ? parseFloat(originalPrice) : null,
                 category,
+                shape,
+                colors: selectedColors,
+                sizes: selectedSizes,
                 image: imageUrl, // USING THE LINK THEY PASTED
                 rating: 5.0, // Default rating for new products
                 createdAt: new Date().getTime()
@@ -48,6 +59,9 @@ const AdminAddProduct = () => {
             setOriginalPrice('');
             setCategory('');
             setImageUrl('');
+            setShape('Rectangular');
+            setSelectedColors([]);
+            setSelectedSizes([]);
         } catch (error) {
             console.error('Error adding product: ', error);
             setMessage(`Error: ${error.message}`);
@@ -120,9 +134,57 @@ const AdminAddProduct = () => {
                             </div>
                         </div>
 
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+                            <div>
+                                <label>Category*</label>
+                                <input required type="text" value={category} onChange={(e) => setCategory(e.target.value)} className="form-control" placeholder="e.g. Shaggy, Hand Tufted" />
+                            </div>
+                            <div>
+                                <label>Shape*</label>
+                                <select value={shape} onChange={(e) => setShape(e.target.value)} className="form-control" style={{ backgroundColor: 'white' }}>
+                                    {AVAILABLE_SHAPES.map(s => <option key={s} value={s}>{s}</option>)}
+                                </select>
+                            </div>
+                        </div>
+
                         <div>
-                            <label>Category*</label>
-                            <input required type="text" value={category} onChange={(e) => setCategory(e.target.value)} className="form-control" placeholder="e.g. Shaggy, Hand Tufted" />
+                            <label style={{ display: 'block', marginBottom: '8px' }}>Available Colors</label>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                {AVAILABLE_COLORS.map(color => (
+                                    <label key={color} style={{ display: 'inline-flex', alignItems: 'center', background: selectedColors.includes(color) ? 'var(--primary)' : '#f1f1f1', color: selectedColors.includes(color) ? 'white' : 'black', padding: '4px 10px', borderRadius: '20px', cursor: 'pointer', border: '1px solid #ccc' }}>
+                                        <input 
+                                            type="checkbox" 
+                                            style={{ display: 'none' }}
+                                            checked={selectedColors.includes(color)}
+                                            onChange={(e) => {
+                                                if (e.target.checked) setSelectedColors([...selectedColors, color]);
+                                                else setSelectedColors(selectedColors.filter(c => c !== color));
+                                            }}
+                                        />
+                                        <span style={{ fontSize: '0.85rem' }}>{color}</span>
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div>
+                            <label style={{ display: 'block', marginBottom: '8px' }}>Available Sizes</label>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                {AVAILABLE_SIZES.map(size => (
+                                    <label key={size} style={{ display: 'inline-flex', alignItems: 'center', background: selectedSizes.includes(size) ? 'var(--primary)' : '#f1f1f1', color: selectedSizes.includes(size) ? 'white' : 'black', padding: '4px 10px', borderRadius: '20px', cursor: 'pointer', border: '1px solid #ccc' }}>
+                                        <input 
+                                            type="checkbox" 
+                                            style={{ display: 'none' }}
+                                            checked={selectedSizes.includes(size)}
+                                            onChange={(e) => {
+                                                if (e.target.checked) setSelectedSizes([...selectedSizes, size]);
+                                                else setSelectedSizes(selectedSizes.filter(s => s !== size));
+                                            }}
+                                        />
+                                        <span style={{ fontSize: '0.85rem' }}>{size}</span>
+                                    </label>
+                                ))}
+                            </div>
                         </div>
 
                         <div>
