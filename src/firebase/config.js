@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import { getAuth } from "firebase/auth";
 
 // TODO: Replace the following with your app's actual Firebase configuration keys
 // To get these keys: Go to Firebase Console -> Project Settings -> General -> Your Web App
@@ -23,4 +24,7 @@ const db = getFirestore(app);
 // Initialize Firebase Storage
 const storage = getStorage(app);
 
-export { db, storage };
+// Initialize Firebase Auth
+const auth = getAuth(app);
+
+export { db, storage, auth };
