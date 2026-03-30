@@ -34,8 +34,8 @@ const Navbar = () => {
         </div>
 
         <div className="nav-right">
-          <Phone className="icon nav-icon" />
-          <MapPin className="icon nav-icon" />
+          <Link to="/contact"><Phone className="icon nav-icon" style={{ color: 'var(--white)' }} /></Link>
+          <Link to="/contact"><MapPin className="icon nav-icon" style={{ color: 'var(--white)' }} /></Link>
           <User className="icon nav-icon" />
           <Search className="icon nav-icon" />
           <div className="cart-icon-wrapper" onClick={toggleCart}>
