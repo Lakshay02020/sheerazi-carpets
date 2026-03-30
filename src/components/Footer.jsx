@@ -7,7 +7,7 @@ const Footer = () => {
                 <div className="footer-grid">
                     <div className="footer-brand">
                         <h2 className="logo-text" style={{ color: 'var(--primary)', fontWeight: 'bold' }}>
-                            Sheerazi
+                            Fine and art
                         </h2>
                         <p className="mt-4" style={{ color: 'var(--text-light)' }}>
                             Bringing traditional elegance and modern design to your floors. Premium handmade carpets from India.
@@ -33,7 +33,7 @@ const Footer = () => {
                     </div>
                 </div>
                 <div className="footer-bottom">
-                    <p>&copy; {new Date().getFullYear()} Sheerazi Carpets. All rights reserved<a href="/admin" style={{ color: 'inherit', textDecoration: 'none' }}>.</a></p>
+                    <p>&copy; {new Date().getFullYear()} Fine and art carpets. All rights reserved<a href="/admin" style={{ color: 'inherit', textDecoration: 'none' }}>.</a></p>
                 </div>
             </div>
             <style>{`

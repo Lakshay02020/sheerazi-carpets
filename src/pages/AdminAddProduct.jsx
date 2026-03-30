@@ -27,7 +27,7 @@ const AdminAddProduct = () => {
             // 2. Save product info to Firestore directly
             const productData = {
                 title,
-                vendor: 'SHEERAZI CARPETS',
+                vendor: 'FINE AND ART CARPETS',
                 price: parseFloat(price),
                 originalPrice: originalPrice ? parseFloat(originalPrice) : null,
                 category,

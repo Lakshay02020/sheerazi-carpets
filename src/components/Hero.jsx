@@ -6,7 +6,7 @@ const Hero = () => {
         <section className="hero">
             <div className="hero-content">
                 <h2>Premium Handmade & Machine-Made Carpets</h2>
-                <p>Explore Sheerazi Carpets' extensive collection of hand-tufted rugs, shaggy carpets, and designer pieces.</p>
+                <p>Explore Fine and art carpets' extensive collection of hand-tufted rugs, shaggy carpets, and designer pieces.</p>
                 <Link to="/shop" className="btn btn-hero">Shop Now</Link>
             </div>
             <style>{`

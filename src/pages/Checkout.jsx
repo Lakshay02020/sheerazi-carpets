@@ -80,7 +80,7 @@ const Checkout = () => {
                 key: "rzp_test_SWAjuCC264eUtf", // Replace when ready
                 amount: data.amount,
                 currency: data.currency,
-                name: "Sheerazi Carpets",
+                name: "Fine and art carpets",
                 description: "Premium Rug Purchase",
                 order_id: data.id,
                 handler: async function (response) {
@@ -139,7 +139,7 @@ const Checkout = () => {
         return (
             <div className="container py-60 text-center">
                 <h2 style={{ color: 'var(--primary)', fontSize: '3rem', marginBottom: '20px' }}>Order Successful!</h2>
-                <p className="mt-4" style={{ fontSize: '1.2rem' }}>Thank you for shopping with Sheerazi Carpets.<br />Your premium rug will arrive soon.</p>
+                <p className="mt-4" style={{ fontSize: '1.2rem' }}>Thank you for shopping with Fine and art carpets.<br />Your premium rug will arrive soon.</p>
                 <button className="btn mt-4" onClick={() => {
                     window.location.href = '/';
                 }}>Continue Shopping</button>
