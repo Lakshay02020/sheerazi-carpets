@@ -2,9 +2,11 @@ import React from 'react';
 import { Menu, Search, User, ShoppingBag, MapPin, Phone, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import SearchOverlay from './SearchOverlay';
 
 const Navbar = () => {
   const { cartCount, toggleCart } = useCart();
+  const [isSearchOpen, setIsSearchOpen] = React.useState(false);
 
   return (
     <header className="navbar-container">
@@ -37,7 +39,9 @@ const Navbar = () => {
           <Link to="/contact"><Phone className="icon nav-icon" style={{ color: 'var(--white)' }} /></Link>
           <Link to="/contact"><MapPin className="icon nav-icon" style={{ color: 'var(--white)' }} /></Link>
           <User className="icon nav-icon" />
-          <Search className="icon nav-icon" />
+          <div onClick={() => setIsSearchOpen(true)} style={{ cursor: 'pointer' }}>
+            <Search className="icon nav-icon" />
+          </div>
           <div className="cart-icon-wrapper" onClick={toggleCart}>
             <ShoppingBag className="icon nav-icon" />
             {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
@@ -95,6 +99,8 @@ const Navbar = () => {
             </li>
         </ul>
       </div>
+
+      <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
 
       <style>{`
         .navbar-container {
