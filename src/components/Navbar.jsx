@@ -22,11 +22,14 @@ const Navbar = () => {
         </div>
 
         <div className="nav-center">
-          <Link to="/" className="logo-link">
-            <h1 className="logo-text">
-              <span className="logo-line">—— Fine and art</span><br />
-              <span className="logo-bold">CARPETS</span>
-            </h1>
+          <Link to="/" className="logo-link" style={{ display: 'inline-flex', alignItems: 'center', gap: '15px', textDecoration: 'none' }}>
+            <img src="/logo.jpg" alt="Fine and Art Carpets" style={{ height: '60px', objectFit: 'contain', mixBlendMode: 'lighten', borderRadius: '4px' }} className="logo-img" />
+            <div style={{ textAlign: 'left' }}>
+              <h1 className="logo-text">
+                <span className="logo-line" style={{ fontSize: '1rem', fontStyle: 'normal' }}>FINE AND ART</span><br />
+                <span className="logo-bold" style={{ fontSize: '1.8rem', letterSpacing: '1px' }}>CARPETS</span>
+              </h1>
+            </div>
           </Link>
         </div>
 
