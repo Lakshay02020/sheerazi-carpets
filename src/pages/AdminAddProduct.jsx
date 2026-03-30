@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { db } from '../firebase/config';
 import { collection, addDoc } from 'firebase/firestore';
 import { products as mockProducts } from '../data/mockProducts';
+import { useAuth } from '../context/AuthContext';
 
 const AdminAddProduct = () => {
     const [title, setTitle] = useState('');
@@ -12,6 +13,8 @@ const AdminAddProduct = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState('');
     const [isSeeding, setIsSeeding] = useState(false);
+    
+    const { logout } = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -83,7 +86,12 @@ const AdminAddProduct = () => {
 
     return (
         <div className="container py-60">
-            <h1 style={{ marginBottom: '30px', textAlign: 'center' }}>Admin: Product Management</h1>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+                <h1 style={{ margin: 0 }}>Admin: Product Management</h1>
+                <button onClick={() => logout()} className="btn" style={{ padding: '8px 15px', backgroundColor: 'var(--text-dark)' }}>
+                    Log Out
+                </button>
+            </div>
             
             <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 600px)', justifyContent: 'center', gap: '40px' }}>
                 <div style={{ padding: '30px', border: '1px solid var(--border-color)', borderRadius: '8px' }}>
