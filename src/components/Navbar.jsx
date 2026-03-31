@@ -1,17 +1,29 @@
 import React from 'react';
-import { Menu, Search, User, ShoppingBag, MapPin, Phone, ChevronDown } from 'lucide-react';
+import { Menu, Search, User, ShoppingBag, MapPin, Phone, ChevronDown, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import SearchOverlay from './SearchOverlay';
 
 const Navbar = () => {
     const { cartCount, toggleCart } = useCart();
+    const [isMenuOpen, setIsMenuOpen] = React.useState(false);
     const [isSearchOpen, setIsSearchOpen] = React.useState(false);
     const [activeDropdown, setActiveDropdown] = React.useState(null);
 
+    const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+    const closeMenu = () => setIsMenuOpen(false);
     const handleMouseEnter = (menu) => setActiveDropdown(menu);
     const handleMouseLeave = () => setActiveDropdown(null);
-    const closeDropdown = () => setActiveDropdown(null);
+    const closeDropdown = () => { setActiveDropdown(null); closeMenu(); };
+
+    // Prevent scrolling when menu is open
+    React.useEffect(() => {
+        if (isMenuOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+    }, [isMenuOpen]);
 
     return (
         <header className="navbar-container" onMouseLeave={handleMouseLeave}>
@@ -24,7 +36,7 @@ const Navbar = () => {
 
             {/* Main Navbar */}
             <nav className="main-nav">
-                <div className="nav-left">
+                <div className="nav-left" onClick={toggleMenu} style={{ cursor: 'pointer' }}>
                     <Menu className="icon icon-menu" />
                 </div>
 
@@ -54,7 +66,67 @@ const Navbar = () => {
                 </div>
             </nav>
 
-            {/* Mega Menu Navigation */}
+            {/* Mobile Navigation Drawer */}
+            <div className={`mobile-drawer-overlay ${isMenuOpen ? 'open' : ''}`} onClick={closeMenu}></div>
+            <div className={`mobile-drawer ${isMenuOpen ? 'open' : ''}`}>
+                <div className="mobile-drawer-header">
+                    <span className="drawer-title caps">Menu</span>
+                    <X className="icon close-icon" onClick={closeMenu} />
+                </div>
+                <div className="mobile-drawer-content">
+                    <div className="drawer-section">
+                        <Link to="/shop" className="drawer-main-link" onClick={closeMenu}>Shop All Carpets</Link>
+                    </div>
+
+                    <div className="drawer-section">
+                        <h4 className="drawer-label">By Category</h4>
+                        <div className="drawer-links">
+                            <Link to="/shop?category=Hand+Tufted" onClick={closeMenu}>Hand Tufted</Link>
+                            <Link to="/shop?category=Shaggy" onClick={closeMenu}>Shaggy</Link>
+                            <Link to="/shop?category=Persian+Silk" onClick={closeMenu}>Persian Silk</Link>
+                            <Link to="/shop?category=Designer" onClick={closeMenu}>Designer</Link>
+                            <Link to="/shop?category=Contemporary" onClick={closeMenu}>Contemporary</Link>
+                        </div>
+                    </div>
+
+                    <div className="drawer-section">
+                        <h4 className="drawer-label">By Size</h4>
+                        <div className="drawer-links">
+                            <Link to="/shop?size=3x5+ft" onClick={closeMenu}>3x5 ft</Link>
+                            <Link to="/shop?size=4x6+ft" onClick={closeMenu}>4x6 ft</Link>
+                            <Link to="/shop?size=5x7+ft" onClick={closeMenu}>5x7 ft</Link>
+                            <Link to="/shop?size=6x9+ft" onClick={closeMenu}>6x9 ft</Link>
+                            <Link to="/shop?size=8x10+ft" onClick={closeMenu}>8x10 ft</Link>
+                        </div>
+                    </div>
+
+                    <div className="drawer-section">
+                        <h4 className="drawer-label">By Color</h4>
+                        <div className="drawer-links grid-2">
+                            <Link to="/shop?color=Red" onClick={closeMenu}>Red</Link>
+                            <Link to="/shop?color=Blue" onClick={closeMenu}>Blue</Link>
+                            <Link to="/shop?color=Beige" onClick={closeMenu}>Beige</Link>
+                            <Link to="/shop?color=Black" onClick={closeMenu}>Black</Link>
+                            <Link to="/shop?color=Green" onClick={closeMenu}>Green</Link>
+                            <Link to="/shop?color=Grey" onClick={closeMenu}>Grey</Link>
+                        </div>
+                    </div>
+
+                    <div className="drawer-section">
+                        <h4 className="drawer-label">Get in Touch</h4>
+                        <div className="drawer-links">
+                            <Link to="/contact" onClick={closeMenu} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <Phone size={18} /> Call Us
+                            </Link>
+                            <Link to="/contact" onClick={closeMenu} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <MapPin size={18} /> Our Showroom
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Mega Menu Navigation (Desktop) */}
             <div className="mega-menu-bar">
                 <ul className="mega-menu-list">
                     <li className="mega-dropdown">
@@ -222,9 +294,8 @@ const Navbar = () => {
           .logo-link {
             gap: 8px !important;
           }
-          /* Hide contact icons on mobile to save space */
-          .nav-right a:nth-child(1),
-          .nav-right a:nth-child(2) {
+          /* Hide only the phone icon to save space, but keep map pin */
+          .nav-right a:nth-child(1) {
             display: none;
           }
         }
@@ -314,6 +385,102 @@ const Navbar = () => {
         }
         .color-grid a {
           border-bottom: none;
+        }
+
+        /* Mobile Drawer */
+        .mobile-drawer-overlay {
+          position: fixed;
+          inset: 0;
+          background-color: rgba(0,0,0,0.5);
+          z-index: 998;
+          opacity: 0;
+          visibility: hidden;
+          transition: 0.3s;
+        }
+        .mobile-drawer-overlay.open {
+          opacity: 1;
+          visibility: visible;
+        }
+        .mobile-drawer {
+          position: fixed;
+          top: 0;
+          left: -300px;
+          width: 300px;
+          height: 100vh;
+          background-color: var(--white);
+          z-index: 999;
+          transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          display: flex;
+          flex-direction: column;
+          box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        .mobile-drawer.open {
+          left: 0;
+        }
+        .mobile-drawer-header {
+          padding: 20px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-bottom: 1px solid var(--border-color);
+          background-color: var(--primary);
+          color: var(--white);
+        }
+        .drawer-title {
+          font-family: var(--font-serif);
+          font-size: 1.1rem;
+          letter-spacing: 1px;
+        }
+        .close-icon {
+          width: 24px;
+          height: 24px;
+          cursor: pointer;
+        }
+        .mobile-drawer-content {
+          flex: 1;
+          overflow-y: auto;
+          padding: 20px;
+        }
+        .drawer-section {
+          margin-bottom: 25px;
+        }
+        .drawer-main-link {
+          display: block;
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: var(--primary);
+          text-decoration: none;
+          padding: 10px 0;
+          border-bottom: 2px solid var(--secondary);
+        }
+        .drawer-label {
+          font-size: 0.8rem;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          color: var(--text-light);
+          margin-bottom: 12px;
+          padding-bottom: 5px;
+          border-bottom: 1px solid #eee;
+        }
+        .drawer-links {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+        .drawer-links a {
+          text-decoration: none;
+          color: var(--text-dark);
+          font-size: 1rem;
+          transition: 0.2s;
+        }
+        .drawer-links a:hover {
+          color: var(--primary);
+          padding-left: 5px;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
         }
       `}</style>
     </header>
