@@ -5,102 +5,119 @@ import { useCart } from '../context/CartContext';
 import SearchOverlay from './SearchOverlay';
 
 const Navbar = () => {
-  const { cartCount, toggleCart } = useCart();
-  const [isSearchOpen, setIsSearchOpen] = React.useState(false);
+    const { cartCount, toggleCart } = useCart();
+    const [isSearchOpen, setIsSearchOpen] = React.useState(false);
+    const [activeDropdown, setActiveDropdown] = React.useState(null);
 
-  return (
-    <header className="navbar-container">
-      {/* Top Announcement Bar */}
-      <div className="top-bar">
-        <p className="caps" style={{ fontSize: '12px', letterSpacing: '2px' }}>
-          Free Shipping Across India | Handcrafted with Love
-        </p>
-      </div>
+    const handleMouseEnter = (menu) => setActiveDropdown(menu);
+    const handleMouseLeave = () => setActiveDropdown(null);
+    const closeDropdown = () => setActiveDropdown(null);
 
-      {/* Main Navbar */}
-      <nav className="main-nav">
-        <div className="nav-left">
-          <Menu className="icon icon-menu" />
-        </div>
-
-        <div className="nav-center">
-          <Link to="/" className="logo-link" style={{ display: 'inline-flex', alignItems: 'center', gap: '15px', textDecoration: 'none' }}>
-            <img src="/logo.jpg" alt="Fine and Art Carpets" style={{ height: '60px', objectFit: 'contain', mixBlendMode: 'lighten', borderRadius: '4px' }} className="logo-img" />
-            <div style={{ textAlign: 'left' }}>
-              <h1 className="logo-text">
-                <span className="logo-line" style={{ fontSize: '1rem', fontStyle: 'normal' }}>FINE AND ART</span><br />
-                <span className="logo-bold" style={{ fontSize: '1.8rem', letterSpacing: '1px' }}>CARPETS</span>
-              </h1>
+    return (
+        <header className="navbar-container" onMouseLeave={handleMouseLeave}>
+            {/* Top Announcement Bar */}
+            <div className="top-bar">
+                <p className="caps" style={{ fontSize: '12px', letterSpacing: '2px' }}>
+                    Free Shipping Across India | Handcrafted with Love
+                </p>
             </div>
-          </Link>
-        </div>
 
-        <div className="nav-right">
-          <Link to="/contact"><Phone className="icon nav-icon" style={{ color: 'var(--white)' }} /></Link>
-          <Link to="/contact"><MapPin className="icon nav-icon" style={{ color: 'var(--white)' }} /></Link>
-          <User className="icon nav-icon" />
-          <div onClick={() => setIsSearchOpen(true)} style={{ cursor: 'pointer' }}>
-            <Search className="icon nav-icon" />
-          </div>
-          <div className="cart-icon-wrapper" onClick={toggleCart}>
-            <ShoppingBag className="icon nav-icon" />
-            {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
-          </div>
-        </div>
-      </nav>
+            {/* Main Navbar */}
+            <nav className="main-nav">
+                <div className="nav-left">
+                    <Menu className="icon icon-menu" />
+                </div>
 
-      {/* Mega Menu Navigation */}
-      <div className="mega-menu-bar">
-        <ul className="mega-menu-list">
-            <li className="mega-dropdown">
-                <Link to="/shop" className="mega-link">Shop All <ChevronDown className="mega-icon" /></Link>
-            </li>
-            <li className="mega-dropdown">
-                <span className="mega-link">By Category <ChevronDown className="mega-icon" /></span>
-                <div className="dropdown-content">
-                    <Link to="/shop?category=Hand+Tufted">Hand Tufted Carpets</Link>
-                    <Link to="/shop?category=Shaggy">Shaggy Carpets</Link>
-                    <Link to="/shop?category=Persian+Silk">Persian Silk Carpets</Link>
-                    <Link to="/shop?category=Designer">Designer Carpets</Link>
-                    <Link to="/shop?category=Contemporary">Contemporary</Link>
+                <div className="nav-center">
+                    <Link to="/" className="logo-link" onClick={closeDropdown} style={{ display: 'inline-flex', alignItems: 'center', gap: '15px', textDecoration: 'none' }}>
+                        <img src="/logo.jpg" alt="Fine and Art Carpets" style={{ height: '60px', objectFit: 'contain', mixBlendMode: 'lighten', borderRadius: '4px' }} className="logo-img" />
+                        <div style={{ textAlign: 'left' }}>
+                            <h1 className="logo-text">
+                                <span className="logo-line" style={{ fontSize: '1rem', fontStyle: 'normal' }}>FINE AND ART</span><br />
+                                <span className="logo-bold" style={{ fontSize: '1.8rem', letterSpacing: '1px' }}>CARPETS</span>
+                            </h1>
+                        </div>
+                    </Link>
                 </div>
-            </li>
-            <li className="mega-dropdown">
-                <span className="mega-link">By Size <ChevronDown className="mega-icon" /></span>
-                <div className="dropdown-content">
-                    <Link to="/shop?size=3x5+ft">3x5 ft</Link>
-                    <Link to="/shop?size=4x6+ft">4x6 ft</Link>
-                    <Link to="/shop?size=5x7+ft">5x7 ft</Link>
-                    <Link to="/shop?size=5x8+ft">5x8 ft</Link>
-                    <Link to="/shop?size=6x9+ft">6x9 ft</Link>
-                    <Link to="/shop?size=8x10+ft">8x10 ft</Link>
-                    <Link to="/shop?size=9x12+ft">9x12 ft</Link>
-                </div>
-            </li>
-            <li className="mega-dropdown">
-                <span className="mega-link">By Color <ChevronDown className="mega-icon" /></span>
-                <div className="dropdown-content color-grid">
-                    <Link to="/shop?color=Red">Red</Link>
-                    <Link to="/shop?color=Blue">Blue</Link>
-                    <Link to="/shop?color=Beige">Beige</Link>
-                    <Link to="/shop?color=Black">Black</Link>
-                    <Link to="/shop?color=Green">Green</Link>
-                    <Link to="/shop?color=White">White</Link>
-                    <Link to="/shop?color=Grey">Grey</Link>
-                </div>
-            </li>
-            <li className="mega-dropdown">
-                <span className="mega-link">By Shape <ChevronDown className="mega-icon" /></span>
-                <div className="dropdown-content">
-                    <Link to="/shop?shape=Rectangular">Rectangular</Link>
-                    <Link to="/shop?shape=Round">Round</Link>
-                    <Link to="/shop?shape=Irregular">Irregular</Link>
-                </div>
-            </li>
-        </ul>
-      </div>
 
-      <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+                <div className="nav-right">
+                    <Link to="/contact" onClick={closeDropdown}><Phone className="icon nav-icon" style={{ color: 'var(--white)' }} /></Link>
+                    <Link to="/contact" onClick={closeDropdown}><MapPin className="icon nav-icon" style={{ color: 'var(--white)' }} /></Link>
+                    <User className="icon nav-icon" />
+                    <div onClick={() => setIsSearchOpen(true)} style={{ cursor: 'pointer' }}>
+                        <Search className="icon nav-icon" />
+                    </div>
+                    <div className="cart-icon-wrapper" onClick={toggleCart}>
+                        <ShoppingBag className="icon nav-icon" />
+                        {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+                    </div>
+                </div>
+            </nav>
+
+            {/* Mega Menu Navigation */}
+            <div className="mega-menu-bar">
+                <ul className="mega-menu-list">
+                    <li className="mega-dropdown">
+                        <Link to="/shop" className="mega-link" onClick={closeDropdown}>Shop All <ChevronDown className="mega-icon" /></Link>
+                    </li>
+                    
+                    <li className="mega-dropdown" onMouseEnter={() => handleMouseEnter('category')}>
+                        <span className="mega-link">By Category <ChevronDown className="mega-icon" /></span>
+                        {activeDropdown === 'category' && (
+                            <div className="dropdown-content show">
+                                <Link to="/shop?category=Hand+Tufted" onClick={closeDropdown}>Hand Tufted Carpets</Link>
+                                <Link to="/shop?category=Shaggy" onClick={closeDropdown}>Shaggy Carpets</Link>
+                                <Link to="/shop?category=Persian+Silk" onClick={closeDropdown}>Persian Silk Carpets</Link>
+                                <Link to="/shop?category=Designer" onClick={closeDropdown}>Designer Carpets</Link>
+                                <Link to="/shop?category=Contemporary" onClick={closeDropdown}>Contemporary</Link>
+                            </div>
+                        )}
+                    </li>
+
+                    <li className="mega-dropdown" onMouseEnter={() => handleMouseEnter('size')}>
+                        <span className="mega-link">By Size <ChevronDown className="mega-icon" /></span>
+                        {activeDropdown === 'size' && (
+                            <div className="dropdown-content show">
+                                <Link to="/shop?size=3x5+ft" onClick={closeDropdown}>3x5 ft</Link>
+                                <Link to="/shop?size=4x6+ft" onClick={closeDropdown}>4x6 ft</Link>
+                                <Link to="/shop?size=5x7+ft" onClick={closeDropdown}>5x7 ft</Link>
+                                <Link to="/shop?size=5x8+ft" onClick={closeDropdown}>5x8 ft</Link>
+                                <Link to="/shop?size=6x9+ft" onClick={closeDropdown}>6x9 ft</Link>
+                                <Link to="/shop?size=8x10+ft" onClick={closeDropdown}>8x10 ft</Link>
+                                <Link to="/shop?size=9x12+ft" onClick={closeDropdown}>9x12 ft</Link>
+                            </div>
+                        )}
+                    </li>
+
+                    <li className="mega-dropdown" onMouseEnter={() => handleMouseEnter('color')}>
+                        <span className="mega-link">By Color <ChevronDown className="mega-icon" /></span>
+                        {activeDropdown === 'color' && (
+                            <div className="dropdown-content color-grid show">
+                                <Link to="/shop?color=Red" onClick={closeDropdown}>Red</Link>
+                                <Link to="/shop?color=Blue" onClick={closeDropdown}>Blue</Link>
+                                <Link to="/shop?color=Beige" onClick={closeDropdown}>Beige</Link>
+                                <Link to="/shop?color=Black" onClick={closeDropdown}>Black</Link>
+                                <Link to="/shop?color=Green" onClick={closeDropdown}>Green</Link>
+                                <Link to="/shop?color=White" onClick={closeDropdown}>White</Link>
+                                <Link to="/shop?color=Grey" onClick={closeDropdown}>Grey</Link>
+                            </div>
+                        )}
+                    </li>
+
+                    <li className="mega-dropdown" onMouseEnter={() => handleMouseEnter('shape')}>
+                        <span className="mega-link">By Shape <ChevronDown className="mega-icon" /></span>
+                        {activeDropdown === 'shape' && (
+                            <div className="dropdown-content show">
+                                <Link to="/shop?shape=Rectangular" onClick={closeDropdown}>Rectangular</Link>
+                                <Link to="/shop?shape=Round" onClick={closeDropdown}>Round</Link>
+                                <Link to="/shop?shape=Irregular" onClick={closeDropdown}>Irregular</Link>
+                            </div>
+                        )}
+                    </li>
+                </ul>
+            </div>
+
+            <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
 
       <style>{`
         .navbar-container {
@@ -232,13 +249,16 @@ const Navbar = () => {
           background-color: var(--white);
           min-width: 220px;
           box-shadow: 0px 8px 24px 0px rgba(0,0,0,0.15);
-          z-index: 101;
+          z-index: 1000; /* High z-index to stay on top */
           border-radius: 4px;
           border: 1px solid var(--border-color);
           overflow: hidden;
         }
-        .mega-dropdown:hover .dropdown-content {
+        .dropdown-content.show {
           display: block;
+        }
+        .dropdown-content.color-grid.show {
+          display: grid;
         }
         .dropdown-content a {
           color: var(--text-dark);
