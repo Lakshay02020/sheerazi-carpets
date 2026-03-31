@@ -199,6 +199,31 @@ const Navbar = () => {
           font-weight: bold;
         }
 
+        @media (max-width: 768px) {
+          .main-nav {
+            padding: 10px 15px;
+          }
+          .logo-img {
+            height: 45px !important;
+          }
+          .logo-bold {
+            font-size: 1.2rem !important;
+          }
+          .logo-line {
+            font-size: 0.8rem !important;
+          }
+          .nav-right {
+            gap: 12px !important;
+          }
+          .nav-icon {
+            width: 18px !important;
+            height: 18px !important;
+          }
+          .logo-link {
+            gap: 8px !important;
+          }
+        }
+
         /* Mega Menu Styles */
         .mega-menu-bar {
           background-color: var(--white);
