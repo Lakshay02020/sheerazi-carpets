@@ -11,7 +11,10 @@ export const products = [
             'https://images.unsplash.com/photo-1562664377-709f2c337eb2?auto=format&fit=crop&q=80&w=800'
         ],
         category: 'Shaggy',
-        rating: 4.8
+        rating: 4.8,
+        sizes: ['3x5 ft', '4x6 ft', '5x8 ft'],
+        colors: ['Beige', 'White'],
+        shape: 'Rectangular'
     },
     {
         id: '2',
@@ -25,7 +28,10 @@ export const products = [
             'https://images.unsplash.com/photo-1549492423-40026e6411d6?auto=format&fit=crop&q=80&w=800'
         ],
         category: 'Hand Tufted',
-        rating: 5.0
+        rating: 5.0,
+        sizes: ['4x6 ft', '5x7 ft', '8x10 ft'],
+        colors: ['Red', 'Brown'],
+        shape: 'Rectangular'
     },
     {
         id: '3',
@@ -38,7 +44,10 @@ export const products = [
             'https://images.unsplash.com/photo-1550581190-9c1c48d21d6c?auto=format&fit=crop&q=80&w=800'
         ],
         category: 'Luxury Viscose',
-        rating: 4.5
+        rating: 4.5,
+        sizes: ['5x8 ft', '6x9 ft'],
+        colors: ['Grey', 'Silver'],
+        shape: 'Rectangular'
     },
     {
         id: '4',
@@ -51,6 +60,9 @@ export const products = [
             'https://images.unsplash.com/photo-1534889156217-d3c8ef4ca270?auto=format&fit=crop&q=80&w=800'
         ],
         category: 'Traditional',
-        rating: 4.9
+        rating: 4.9,
+        sizes: ['6x9 ft', '8x10 ft', '9x12 ft'],
+        colors: ['Blue', 'Gold'],
+        shape: 'Rectangular'
     }
 ];

@@ -1,12 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { db } from '../firebase/config';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, doc, getDoc, setDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { products as mockProducts } from '../data/mockProducts';
 import { useAuth } from '../context/AuthContext';
 
-const AVAILABLE_COLORS = ['Red', 'Blue', 'Beige', 'Black', 'Green', 'White', 'Grey', 'Brown', 'Pink', 'Yellow'];
-const AVAILABLE_SIZES = ['3x5 ft', '4x6 ft', '5x7 ft', '5x8 ft', '6x8 ft', '6x9 ft', '8x10 ft', '9x12 ft'];
-const AVAILABLE_SHAPES = ['Rectangular', 'Round', 'Irregular'];
 
 const AdminAddProduct = () => {
     const [title, setTitle] = useState('');
@@ -18,11 +15,50 @@ const AdminAddProduct = () => {
     const [selectedColors, setSelectedColors] = useState([]);
     const [selectedSizes, setSelectedSizes] = useState([]);
     
+    // Dynamic Metadata State
+    const [availableColors, setAvailableColors] = useState([]);
+    const [availableSizes, setAvailableSizes] = useState([]);
+    const [availableShapes, setAvailableShapes] = useState([]);
+    const [newSize, setNewSize] = useState('');
+    const [newShape, setNewShape] = useState('');
+    const [newColor, setNewColor] = useState('');
+
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState('');
     const [isSeeding, setIsSeeding] = useState(false);
     
     const { logout } = useAuth();
+
+    // Fetch and sync global metadata from Firestore
+    useEffect(() => {
+        const fetchMetadata = async () => {
+            try {
+                const docRef = doc(db, 'metadata', 'product_options');
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    setAvailableColors(data.colors || []);
+                    setAvailableSizes(data.sizes || []);
+                    setAvailableShapes(data.shapes || []);
+                } else {
+                    // Initialize if not present
+                    const initialData = {
+                        colors: ['Red', 'Blue', 'Beige', 'Black', 'Green', 'White', 'Grey', 'Brown', 'Pink', 'Yellow'],
+                        sizes: ['3x5 ft', '4x6 ft', '5x7 ft', '5x8 ft', '6x8 ft', '6x9 ft', '8x10 ft', '9x12 ft'],
+                        shapes: ['Rectangular', 'Round', 'Irregular']
+                    };
+                    await setDoc(docRef, initialData);
+                    setAvailableColors(initialData.colors);
+                    setAvailableSizes(initialData.sizes);
+                    setAvailableShapes(initialData.shapes);
+                }
+            } catch (error) {
+                console.error("Error fetching metadata: ", error);
+            }
+        };
+        fetchMetadata();
+    }, []);
 
     const handleAddImageUrl = () => {
         setImageUrls([...imageUrls, '']);
@@ -37,6 +73,60 @@ const AdminAddProduct = () => {
         const newUrls = [...imageUrls];
         newUrls[index] = value;
         setImageUrls(newUrls);
+    };
+
+    const handleAddNewSize = async () => {
+        if (!newSize.trim()) return;
+        const sizeToAdd = newSize.trim();
+        if (!availableSizes.includes(sizeToAdd)) {
+            try {
+                const docRef = doc(db, 'metadata', 'product_options');
+                await updateDoc(docRef, {
+                    sizes: arrayUnion(sizeToAdd)
+                });
+                setAvailableSizes([...availableSizes, sizeToAdd]);
+                setSelectedSizes([...selectedSizes, sizeToAdd]);
+                setNewSize('');
+            } catch (error) {
+                console.error("Error adding size: ", error);
+            }
+        }
+    };
+
+    const handleAddNewShape = async () => {
+        if (!newShape.trim()) return;
+        const shapeToAdd = newShape.trim();
+        if (!availableShapes.includes(shapeToAdd)) {
+            try {
+                const docRef = doc(db, 'metadata', 'product_options');
+                await updateDoc(docRef, {
+                    shapes: arrayUnion(shapeToAdd)
+                });
+                setAvailableShapes([...availableShapes, shapeToAdd]);
+                setShape(shapeToAdd);
+                setNewShape('');
+            } catch (error) {
+                console.error("Error adding shape: ", error);
+            }
+        }
+    };
+
+    const handleAddNewColor = async () => {
+        if (!newColor.trim()) return;
+        const colorToAdd = newColor.trim();
+        if (!availableColors.includes(colorToAdd)) {
+            try {
+                const docRef = doc(db, 'metadata', 'product_options');
+                await updateDoc(docRef, {
+                    colors: arrayUnion(colorToAdd)
+                });
+                setAvailableColors([...availableColors, colorToAdd]);
+                setSelectedColors([...selectedColors, colorToAdd]);
+                setNewColor('');
+            } catch (error) {
+                console.error("Error adding color: ", error);
+            }
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -102,6 +192,9 @@ const AdminAddProduct = () => {
                     originalPrice: product.originalPrice,
                     category: product.category,
                     images: product.images || [product.image], // Support both old and new format
+                    sizes: product.sizes || ['3x5 ft', '5x8 ft', '8x10 ft'],
+                    colors: product.colors || ['Beige', 'Red'],
+                    shape: product.shape || 'Rectangular',
                     rating: product.rating,
                     createdAt: new Date().getTime()
                 };
@@ -160,16 +253,29 @@ const AdminAddProduct = () => {
                             </div>
                             <div>
                                 <label>Shape*</label>
-                                <select value={shape} onChange={(e) => setShape(e.target.value)} className="form-control" style={{ backgroundColor: 'white' }}>
-                                    {AVAILABLE_SHAPES.map(s => <option key={s} value={s}>{s}</option>)}
-                                </select>
+                                <div style={{ display: 'flex', gap: '10px', marginTop: '5px' }}>
+                                    <select value={shape} onChange={(e) => setShape(e.target.value)} className="form-control" style={{ backgroundColor: 'white', flex: 1, marginTop: 0 }}>
+                                        {availableShapes.map(s => <option key={s} value={s}>{s}</option>)}
+                                    </select>
+                                </div>
+                                <div style={{ display: 'flex', gap: '5px', marginTop: '10px' }}>
+                                    <input 
+                                        type="text" 
+                                        placeholder="Add New Shape" 
+                                        value={newShape} 
+                                        onChange={(e) => setNewShape(e.target.value)} 
+                                        className="form-control" 
+                                        style={{ fontSize: '0.8rem', padding: '8px', marginTop: 0 }}
+                                    />
+                                    <button type="button" onClick={handleAddNewShape} className="btn" style={{ padding: '0 10px', fontSize: '0.8rem', backgroundColor: 'var(--text-dark)' }}>Add</button>
+                                </div>
                             </div>
                         </div>
 
                         <div>
                             <label style={{ display: 'block', marginBottom: '8px' }}>Available Colors</label>
                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                                {AVAILABLE_COLORS.map(color => (
+                                {availableColors.map(color => (
                                     <label key={color} style={{ display: 'inline-flex', alignItems: 'center', background: selectedColors.includes(color) ? 'var(--primary)' : '#f1f1f1', color: selectedColors.includes(color) ? 'white' : 'black', padding: '4px 10px', borderRadius: '20px', cursor: 'pointer', border: '1px solid #ccc' }}>
                                         <input 
                                             type="checkbox" 
@@ -184,12 +290,23 @@ const AdminAddProduct = () => {
                                     </label>
                                 ))}
                             </div>
+                            <div style={{ display: 'flex', gap: '5px', marginTop: '10px' }}>
+                                <input 
+                                    type="text" 
+                                    placeholder="Add New Color" 
+                                    value={newColor} 
+                                    onChange={(e) => setNewColor(e.target.value)} 
+                                    className="form-control" 
+                                    style={{ fontSize: '0.8rem', padding: '8px', marginTop: 0 }}
+                                />
+                                <button type="button" onClick={handleAddNewColor} className="btn" style={{ padding: '0 10px', fontSize: '0.8rem', backgroundColor: 'var(--text-dark)' }}>Add</button>
+                            </div>
                         </div>
 
                         <div>
                             <label style={{ display: 'block', marginBottom: '8px' }}>Available Sizes</label>
                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                                {AVAILABLE_SIZES.map(size => (
+                                {availableSizes.map(size => (
                                     <label key={size} style={{ display: 'inline-flex', alignItems: 'center', background: selectedSizes.includes(size) ? 'var(--primary)' : '#f1f1f1', color: selectedSizes.includes(size) ? 'white' : 'black', padding: '4px 10px', borderRadius: '20px', cursor: 'pointer', border: '1px solid #ccc' }}>
                                         <input 
                                             type="checkbox" 
@@ -203,6 +320,17 @@ const AdminAddProduct = () => {
                                         <span style={{ fontSize: '0.85rem' }}>{size}</span>
                                     </label>
                                 ))}
+                            </div>
+                            <div style={{ display: 'flex', gap: '5px', marginTop: '10px' }}>
+                                <input 
+                                    type="text" 
+                                    placeholder="Add New Size (e.g. 10x14 ft)" 
+                                    value={newSize} 
+                                    onChange={(e) => setNewSize(e.target.value)} 
+                                    className="form-control" 
+                                    style={{ fontSize: '0.8rem', padding: '8px', marginTop: 0 }}
+                                />
+                                <button type="button" onClick={handleAddNewSize} className="btn" style={{ padding: '0 10px', fontSize: '0.8rem', backgroundColor: 'var(--text-dark)' }}>Add</button>
                             </div>
                         </div>
 

@@ -10,7 +10,7 @@ const ProductDetails = () => {
     const { addToCart } = useCart();
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [selectedSize, setSelectedSize] = useState('5x8');
+    const [selectedSize, setSelectedSize] = useState('');
     const [activeImageIndex, setActiveImageIndex] = useState(0);
 
     useEffect(() => {
@@ -19,7 +19,12 @@ const ProductDetails = () => {
                 const docRef = doc(db, 'products', id);
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
-                    setProduct({ id: docSnap.id, ...docSnap.data() });
+                    const data = docSnap.data();
+                    setProduct({ id: docSnap.id, ...data });
+                    // Set default selected size to the first available size
+                    if (data.sizes && data.sizes.length > 0) {
+                        setSelectedSize(data.sizes[0]);
+                    }
                 } else {
                     console.log("No such product!");
                 }
@@ -55,8 +60,6 @@ const ProductDetails = () => {
     };
 
     const productImages = getImages();
-
-    const sizes = ['3x5', '4x6', '5x8', '8x10', '9x12'];
 
     const handleAddToCart = () => {
         addToCart({ ...product, size: selectedSize, quantity: 1 });
@@ -99,20 +102,22 @@ const ProductDetails = () => {
                         <span className="current-price">₹{product.price.toFixed(2)}</span>
                     </div>
 
-                    <div className="size-selector">
-                        <h4>Select Size (Feet)</h4>
-                        <div className="size-buttons">
-                            {sizes.map(size => (
-                                <button
-                                    key={size}
-                                    className={`size-btn ${selectedSize === size ? 'selected' : ''}`}
-                                    onClick={() => setSelectedSize(size)}
-                                >
-                                    {size}
-                                </button>
-                            ))}
+                    {product.sizes && product.sizes.length > 0 && (
+                        <div className="size-selector">
+                            <h4>Select Size (Feet)</h4>
+                            <div className="size-buttons">
+                                {product.sizes.map(size => (
+                                    <button
+                                        key={size}
+                                        className={`size-btn ${selectedSize === size ? 'selected' : ''}`}
+                                        onClick={() => setSelectedSize(size)}
+                                    >
+                                        {size}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     <div className="action-buttons">
                         <button className="btn btn-add-cart" onClick={handleAddToCart}>Add to Cart</button>
