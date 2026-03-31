@@ -76,20 +76,31 @@ const ProductCard = ({ product }) => {
           font-size: 0.75rem;
           color: var(--text-light);
           margin-bottom: 8px;
+          display: block;
         }
         .product-title {
           font-size: 1.1rem;
           margin-bottom: 12px;
           min-height: 2.4em;
+          display: block;
+        }
+        .product-info {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 0 10px;
         }
         .product-price {
           font-family: var(--font-sans);
           font-weight: 500;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
         }
         .original-price {
           color: var(--text-light);
           text-decoration: line-through;
-          margin-right: 10px;
           font-size: 0.9rem;
         }
         .current-price {

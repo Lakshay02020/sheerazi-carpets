@@ -222,6 +222,11 @@ const Navbar = () => {
           .logo-link {
             gap: 8px !important;
           }
+          /* Hide contact icons on mobile to save space */
+          .nav-right a:nth-child(1),
+          .nav-right a:nth-child(2) {
+            display: none;
+          }
         }
 
         /* Mega Menu Styles */
