@@ -5,7 +5,11 @@ export const products = [
         vendor: 'FINE AND ART CARPETS',
         price: 3490.00,
         originalPrice: 5990.00,
-        image: 'https://images.unsplash.com/photo-1620000617392-50d40e02c5de?auto=format&fit=crop&q=80&w=800',
+        images: [
+            'https://images.unsplash.com/photo-1620000617392-50d40e02c5de?auto=format&fit=crop&q=80&w=800',
+            'https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?auto=format&fit=crop&q=80&w=800',
+            'https://images.unsplash.com/photo-1562664377-709f2c337eb2?auto=format&fit=crop&q=80&w=800'
+        ],
         category: 'Shaggy',
         rating: 4.8
     },
@@ -15,7 +19,11 @@ export const products = [
         vendor: 'FINE AND ART CARPETS',
         price: 8990.00,
         originalPrice: 12500.00,
-        image: 'https://images.unsplash.com/photo-1600166898405-da9535204843?auto=format&fit=crop&q=80&w=800',
+        images: [
+            'https://images.unsplash.com/photo-1600166898405-da9535204843?auto=format&fit=crop&q=80&w=800',
+            'https://images.unsplash.com/photo-1574519106437-023cdd6e8557?auto=format&fit=crop&q=80&w=800',
+            'https://images.unsplash.com/photo-1549492423-40026e6411d6?auto=format&fit=crop&q=80&w=800'
+        ],
         category: 'Hand Tufted',
         rating: 5.0
     },
@@ -25,7 +33,10 @@ export const products = [
         vendor: 'FINE AND ART CARPETS',
         price: 4550.00,
         originalPrice: 7200.00,
-        image: 'https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&q=80&w=800',
+        images: [
+            'https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&q=80&w=800',
+            'https://images.unsplash.com/photo-1550581190-9c1c48d21d6c?auto=format&fit=crop&q=80&w=800'
+        ],
         category: 'Luxury Viscose',
         rating: 4.5
     },
@@ -35,7 +46,10 @@ export const products = [
         vendor: 'FINE AND ART CARPETS',
         price: 15990.00,
         originalPrice: 22000.00,
-        image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?auto=format&fit=crop&q=80&w=800',
+        images: [
+            'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?auto=format&fit=crop&q=80&w=800',
+            'https://images.unsplash.com/photo-1534889156217-d3c8ef4ca270?auto=format&fit=crop&q=80&w=800'
+        ],
         category: 'Traditional',
         rating: 4.9
     }
