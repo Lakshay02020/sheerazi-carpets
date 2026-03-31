@@ -6,7 +6,7 @@ import { useProducts } from '../context/ProductContext';
 
 const SHOP_CATEGORIES = [
     { name: 'Hand Tufted', url: 'https://images.unsplash.com/photo-1594040226829-7f251ab46d80?auto=format&fit=crop&q=80&w=800' },
-    { name: 'Shaggy', url: 'https://images.unsplash.com/photo-1591608512476-af34daeca380?auto=format&fit=crop&q=80&w=800' },
+    { name: 'Shaggy', url: 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&q=80&w=800' },
     { name: 'Persian Silk', url: 'https://images.unsplash.com/photo-1600166898405-da9535204843?auto=format&fit=crop&q=80&w=800' },
     { name: 'Designer', url: 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&q=80&w=800' }
 ];
