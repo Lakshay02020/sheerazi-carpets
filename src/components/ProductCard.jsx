@@ -6,7 +6,12 @@ const ProductCard = ({ product }) => {
         <div className="product-card">
             <Link to={`/product/${product.id}`} className="product-link">
                 <div className="product-image-container">
-                    <img src={product.image} alt={product.title} className="product-image" onError={(e) => { e.target.onerror = null; e.target.src = 'https://picsum.photos/seed/carpet_fallback/800/800'; }} />
+                    <img 
+                        src={(product.images && product.images.length > 0) ? product.images[0] : product.image} 
+                        alt={product.title} 
+                        className="product-image" 
+                        onError={(e) => { e.target.onerror = null; e.target.src = 'https://picsum.photos/seed/carpet_fallback/800/800'; }} 
+                    />
                     {product.originalPrice > product.price && (
                         <div className="sale-badge">Sale</div>
                     )}

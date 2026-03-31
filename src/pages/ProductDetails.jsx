@@ -11,6 +11,7 @@ const ProductDetails = () => {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [selectedSize, setSelectedSize] = useState('5x8');
+    const [activeImageIndex, setActiveImageIndex] = useState(0);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -45,6 +46,16 @@ const ProductDetails = () => {
         );
     }
 
+    // Moved after null checks for safety
+    const getImages = () => {
+        if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+            return product.images;
+        }
+        return product.image ? [product.image] : ['https://picsum.photos/seed/carpet_fallback/800/800'];
+    };
+
+    const productImages = getImages();
+
     const sizes = ['3x5', '4x6', '5x8', '8x10', '9x12'];
 
     const handleAddToCart = () => {
@@ -55,7 +66,27 @@ const ProductDetails = () => {
         <div className="product-details container py-60">
             <div className="product-layout">
                 <div className="product-image-section">
-                    <img src={product.image} alt={product.title} className="main-image" onError={(e) => { e.target.onerror = null; e.target.src = 'https://picsum.photos/seed/carpet_fallback/800/800'; }} />
+                    <div className="main-image-container">
+                        <img 
+                            src={productImages[activeImageIndex]} 
+                            alt={product.title} 
+                            className="main-image" 
+                            onError={(e) => { e.target.onerror = null; e.target.src = 'https://picsum.photos/seed/carpet_fallback/800/800'; }} 
+                        />
+                    </div>
+                    {productImages.length > 1 && (
+                        <div className="thumbnail-grid">
+                            {productImages.map((img, index) => (
+                                <div 
+                                    key={index} 
+                                    className={`thumbnail-item ${activeImageIndex === index ? 'active' : ''}`}
+                                    onClick={() => setActiveImageIndex(index)}
+                                >
+                                    <img src={img} alt={`${product.title} view ${index + 1}`} />
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 <div className="product-info-section">
@@ -108,9 +139,43 @@ const ProductDetails = () => {
             grid-template-columns: 1fr 1fr;
           }
         }
+        .main-image-container {
+          width: 100%;
+          margin-bottom: 15px;
+          border-radius: 4px;
+          overflow: hidden;
+          background: #f9f9f9;
+        }
         .main-image {
           width: 100%;
+          height: auto;
+          display: block;
+          transition: transform 0.3s ease;
+        }
+        .thumbnail-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+          gap: 10px;
+        }
+        .thumbnail-item {
+          aspect-ratio: 1;
+          cursor: pointer;
+          border: 1px solid var(--border-color);
+          overflow: hidden;
           border-radius: 4px;
+          transition: all 0.2s ease;
+        }
+        .thumbnail-item img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        .thumbnail-item:hover {
+          border-color: var(--primary);
+        }
+        .thumbnail-item.active {
+          border-color: var(--primary);
+          box-shadow: 0 0 0 1px var(--primary);
         }
         .product-vendor {
           font-size: 0.9rem;

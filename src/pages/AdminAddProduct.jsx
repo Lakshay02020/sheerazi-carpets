@@ -13,7 +13,7 @@ const AdminAddProduct = () => {
     const [price, setPrice] = useState('');
     const [originalPrice, setOriginalPrice] = useState('');
     const [category, setCategory] = useState('');
-    const [imageUrl, setImageUrl] = useState('');
+    const [imageUrls, setImageUrls] = useState(['']); // Array of image URLs
     const [shape, setShape] = useState('Rectangular');
     const [selectedColors, setSelectedColors] = useState([]);
     const [selectedSizes, setSelectedSizes] = useState([]);
@@ -24,10 +24,29 @@ const AdminAddProduct = () => {
     
     const { logout } = useAuth();
 
+    const handleAddImageUrl = () => {
+        setImageUrls([...imageUrls, '']);
+    };
+
+    const handleRemoveImageUrl = (index) => {
+        const newUrls = imageUrls.filter((_, i) => i !== index);
+        setImageUrls(newUrls.length > 0 ? newUrls : ['']);
+    };
+
+    const handleImageUrlChange = (index, value) => {
+        const newUrls = [...imageUrls];
+        newUrls[index] = value;
+        setImageUrls(newUrls);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!imageUrl) {
-            setMessage('Please paste an image URL address.');
+        
+        // Filter out empty URLs
+        const validUrls = imageUrls.filter(url => url.trim() !== '');
+
+        if (validUrls.length === 0) {
+            setMessage('Please paste at least one image URL address.');
             return;
         }
 
@@ -45,7 +64,7 @@ const AdminAddProduct = () => {
                 shape,
                 colors: selectedColors,
                 sizes: selectedSizes,
-                image: imageUrl, // USING THE LINK THEY PASTED
+                images: validUrls, // Use the array of valid URLs
                 rating: 5.0, // Default rating for new products
                 createdAt: new Date().getTime()
             };
@@ -58,7 +77,7 @@ const AdminAddProduct = () => {
             setPrice('');
             setOriginalPrice('');
             setCategory('');
-            setImageUrl('');
+            setImageUrls(['']);
             setShape('Rectangular');
             setSelectedColors([]);
             setSelectedSizes([]);
@@ -82,7 +101,7 @@ const AdminAddProduct = () => {
                     price: product.price,
                     originalPrice: product.originalPrice,
                     category: product.category,
-                    image: product.image,
+                    images: product.images || [product.image], // Support both old and new format
                     rating: product.rating,
                     createdAt: new Date().getTime()
                 };
@@ -188,11 +207,43 @@ const AdminAddProduct = () => {
                         </div>
 
                         <div>
-                            <label>Product Image Link URL*</label>
-                            <input required type="url" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className="form-control" placeholder="https://images.unsplash.com/photo-..." />
+                            <label style={{ display: 'block', marginBottom: '10px' }}>Product Image Links (URLs)*</label>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                {imageUrls.map((url, index) => (
+                                    <div key={index} style={{ display: 'flex', gap: '10px' }}>
+                                        <input 
+                                            required={index === 0} 
+                                            type="url" 
+                                            value={url} 
+                                            onChange={(e) => handleImageUrlChange(index, e.target.value)} 
+                                            className="form-control" 
+                                            style={{ marginTop: 0 }}
+                                            placeholder={`Image URL ${index + 1}`} 
+                                        />
+                                        {imageUrls.length > 1 && (
+                                            <button 
+                                                type="button" 
+                                                onClick={() => handleRemoveImageUrl(index)}
+                                                className="btn"
+                                                style={{ padding: '0 15px', backgroundColor: '#e53935' }}
+                                            >
+                                                ✕
+                                            </button>
+                                        )}
+                                    </div>
+                                ))}
+                                <button 
+                                    type="button" 
+                                    onClick={handleAddImageUrl}
+                                    className="btn"
+                                    style={{ backgroundColor: 'var(--text-dark)', padding: '10px', fontSize: '0.9rem' }}
+                                >
+                                    + Add Another Image
+                                </button>
+                            </div>
                         </div>
 
-                        <button type="submit" className="btn" disabled={isLoading} style={{ marginTop: '10px' }}>
+                        <button type="submit" className="btn" disabled={isLoading} style={{ marginTop: '20px' }}>
                             {isLoading ? 'Saving Product...' : 'Add to Store'}
                         </button>
                     </form>
