@@ -14,7 +14,12 @@ export const products = [
         rating: 4.8,
         sizes: ['3x5 ft', '4x6 ft', '5x8 ft'],
         colors: ['Beige', 'White'],
-        shape: 'Rectangular'
+        shape: 'Rectangular',
+        variants: [
+            { size: '3x5 ft', price: 3490.00, originalPrice: 5990.00 },
+            { size: '4x6 ft', price: 4990.00, originalPrice: 7990.00 },
+            { size: '5x8 ft', price: 6490.00, originalPrice: 9990.00 }
+        ]
     },
     {
         id: '2',
@@ -31,7 +36,12 @@ export const products = [
         rating: 5.0,
         sizes: ['4x6 ft', '5x7 ft', '8x10 ft'],
         colors: ['Red', 'Brown'],
-        shape: 'Rectangular'
+        shape: 'Rectangular',
+        variants: [
+            { size: '4x6 ft', price: 8990.00, originalPrice: 12500.00 },
+            { size: '5x7 ft', price: 11500.00, originalPrice: 15990.00 },
+            { size: '8x10 ft', price: 18990.00, originalPrice: 25000.00 }
+        ]
     },
     {
         id: '3',
@@ -47,7 +57,11 @@ export const products = [
         rating: 4.5,
         sizes: ['5x8 ft', '6x9 ft'],
         colors: ['Grey', 'Silver'],
-        shape: 'Rectangular'
+        shape: 'Rectangular',
+        variants: [
+            { size: '5x8 ft', price: 4550.00, originalPrice: 7200.00 },
+            { size: '6x9 ft', price: 6200.00, originalPrice: 8900.00 }
+        ]
     },
     {
         id: '4',
@@ -63,6 +77,11 @@ export const products = [
         rating: 4.9,
         sizes: ['6x9 ft', '8x10 ft', '9x12 ft'],
         colors: ['Blue', 'Gold'],
-        shape: 'Rectangular'
+        shape: 'Rectangular',
+        variants: [
+            { size: '6x9 ft', price: 15990.00, originalPrice: 22000.00 },
+            { size: '8x10 ft', price: 24990.00, originalPrice: 32000.00 },
+            { size: '9x12 ft', price: 34990.00, originalPrice: 45000.00 }
+        ]
     }
 ];

@@ -61,8 +61,19 @@ const ProductDetails = () => {
 
     const productImages = getImages();
 
+    // Find the current variant based on selected size
+    const currentVariant = product.variants?.find(v => v.size === selectedSize);
+    const displayPrice = currentVariant ? currentVariant.price : product.price;
+    const displayOriginalPrice = currentVariant ? currentVariant.originalPrice : product.originalPrice;
+
     const handleAddToCart = () => {
-        addToCart({ ...product, size: selectedSize, quantity: 1 });
+        addToCart({ 
+            ...product, 
+            size: selectedSize, 
+            price: displayPrice, // Use variant price
+            originalPrice: displayOriginalPrice, // Use variant original price
+            quantity: 1 
+        });
     };
 
     return (
@@ -91,15 +102,17 @@ const ProductDetails = () => {
                         </div>
                     )}
                 </div>
-
+                
                 <div className="product-info-section">
                     <p className="product-vendor caps">{product.vendor}</p>
                     <h1 className="product-title">{product.title}</h1>
                     <div className="product-price">
-                        {product.originalPrice > product.price && (
-                            <span className="original-price">₹{product.originalPrice.toFixed(2)}</span>
+                        {displayOriginalPrice && displayPrice && parseFloat(displayOriginalPrice) > parseFloat(displayPrice) && (
+                            <span className="original-price">₹{parseFloat(displayOriginalPrice).toFixed(2)}</span>
                         )}
-                        <span className="current-price">₹{product.price.toFixed(2)}</span>
+                        <span className="current-price">
+                            {displayPrice ? `₹${parseFloat(displayPrice).toFixed(2)}` : 'Contact for Price'}
+                        </span>
                     </div>
 
                     {product.sizes && product.sizes.length > 0 && (
