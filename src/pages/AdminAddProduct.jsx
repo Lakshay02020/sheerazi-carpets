@@ -15,6 +15,9 @@ const AdminAddProduct = () => {
     const [selectedColors, setSelectedColors] = useState([]);
     const [selectedSizes, setSelectedSizes] = useState([]);
     
+    // Variant pricing state: { [size]: { price, originalPrice } }
+    const [variantPrices, setVariantPrices] = useState({});
+
     // Dynamic Metadata State
     const [availableColors, setAvailableColors] = useState([]);
     const [availableSizes, setAvailableSizes] = useState([]);
@@ -144,16 +147,33 @@ const AdminAddProduct = () => {
         setMessage('');
 
         try {
+            // Build variants array
+            const variants = selectedSizes.map(size => ({
+                size,
+                price: parseFloat(variantPrices[size]?.price || price),
+                originalPrice: variantPrices[size]?.originalPrice ? parseFloat(variantPrices[size].originalPrice) : (originalPrice ? parseFloat(originalPrice) : null)
+            }));
+
+            // Calculate base price for catalog (lowest price)
+            const lowestPrice = variants.length > 0 
+                ? Math.min(...variants.map(v => v.price)) 
+                : parseFloat(price);
+            
+            const lowestOriginalPrice = variants.length > 0
+                ? Math.max(...variants.filter(v => v.originalPrice).map(v => v.originalPrice))
+                : (originalPrice ? parseFloat(originalPrice) : null);
+
             // 2. Save product info to Firestore directly
             const productData = {
                 title,
                 vendor: 'FINE AND ART CARPETS',
-                price: parseFloat(price),
-                originalPrice: originalPrice ? parseFloat(originalPrice) : null,
+                price: lowestPrice,
+                originalPrice: lowestOriginalPrice,
                 category,
                 shape,
                 colors: selectedColors,
-                sizes: selectedSizes,
+                sizes: selectedSizes, // Keep for legacy/search
+                variants: variants, // New variant structure
                 images: validUrls, // Use the array of valid URLs
                 rating: 5.0, // Default rating for new products
                 createdAt: new Date().getTime()
@@ -171,6 +191,7 @@ const AdminAddProduct = () => {
             setShape('Rectangular');
             setSelectedColors([]);
             setSelectedSizes([]);
+            setVariantPrices({});
         } catch (error) {
             console.error('Error adding product: ', error);
             setMessage(`Error: ${error.message}`);
@@ -304,21 +325,68 @@ const AdminAddProduct = () => {
                         </div>
 
                         <div>
-                            <label style={{ display: 'block', marginBottom: '8px' }}>Available Sizes</label>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                            <label style={{ display: 'block', marginBottom: '8px' }}>Available Sizes & Pricing*</label>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                                 {availableSizes.map(size => (
-                                    <label key={size} style={{ display: 'inline-flex', alignItems: 'center', background: selectedSizes.includes(size) ? 'var(--primary)' : '#f1f1f1', color: selectedSizes.includes(size) ? 'white' : 'black', padding: '4px 10px', borderRadius: '20px', cursor: 'pointer', border: '1px solid #ccc' }}>
-                                        <input 
-                                            type="checkbox" 
-                                            style={{ display: 'none' }}
-                                            checked={selectedSizes.includes(size)}
-                                            onChange={(e) => {
-                                                if (e.target.checked) setSelectedSizes([...selectedSizes, size]);
-                                                else setSelectedSizes(selectedSizes.filter(s => s !== size));
-                                            }}
-                                        />
-                                        <span style={{ fontSize: '0.85rem' }}>{size}</span>
-                                    </label>
+                                    <div key={size} style={{ border: '1px solid #eee', padding: '15px', borderRadius: '8px', background: selectedSizes.includes(size) ? '#fbfbfb' : 'transparent' }}>
+                                        <label style={{ display: 'inline-flex', alignItems: 'center', background: selectedSizes.includes(size) ? 'var(--primary)' : '#f1f1f1', color: selectedSizes.includes(size) ? 'white' : 'black', padding: '6px 12px', borderRadius: '20px', cursor: 'pointer', border: '1px solid #ccc' }}>
+                                            <input 
+                                                type="checkbox" 
+                                                style={{ display: 'none' }}
+                                                checked={selectedSizes.includes(size)}
+                                                onChange={(e) => {
+                                                    if (e.target.checked) {
+                                                        setSelectedSizes([...selectedSizes, size]);
+                                                        // Initialize price with the global price if empty
+                                                        if (!variantPrices[size]) {
+                                                            setVariantPrices({
+                                                                ...variantPrices,
+                                                                [size]: { price: price, originalPrice: originalPrice }
+                                                            });
+                                                        }
+                                                    } else {
+                                                        setSelectedSizes(selectedSizes.filter(s => s !== size));
+                                                    }
+                                                }}
+                                            />
+                                            <span style={{ fontSize: '0.9rem', fontWeight: '600' }}>{size}</span>
+                                        </label>
+
+                                        {selectedSizes.includes(size) && (
+                                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginTop: '12px' }}>
+                                                <div>
+                                                    <label style={{ fontSize: '0.75rem', color: '#666' }}>Price for {size} (₹)*</label>
+                                                    <input 
+                                                        required 
+                                                        type="number" 
+                                                        step="0.01" 
+                                                        value={variantPrices[size]?.price || ''} 
+                                                        onChange={(e) => setVariantPrices({
+                                                            ...variantPrices,
+                                                            [size]: { ...variantPrices[size], price: e.target.value }
+                                                        })}
+                                                        className="form-control" 
+                                                        style={{ padding: '8px', fontSize: '0.9rem' }}
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label style={{ fontSize: '0.75rem', color: '#666' }}>Original Price (₹)</label>
+                                                    <input 
+                                                        type="number" 
+                                                        step="0.01" 
+                                                        value={variantPrices[size]?.originalPrice || ''} 
+                                                        onChange={(e) => setVariantPrices({
+                                                            ...variantPrices,
+                                                            [size]: { ...variantPrices[size], originalPrice: e.target.value }
+                                                        })}
+                                                        className="form-control" 
+                                                        style={{ padding: '8px', fontSize: '0.9rem' }}
+                                                        placeholder="Optional"
+                                                    />
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
                                 ))}
                             </div>
                             <div style={{ display: 'flex', gap: '5px', marginTop: '10px' }}>

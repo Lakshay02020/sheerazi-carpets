@@ -23,7 +23,9 @@ const ProductCard = ({ product }) => {
                         {product.originalPrice > product.price && (
                             <span className="original-price">₹{product.originalPrice.toFixed(2)}</span>
                         )}
-                        <span className="current-price">₹{product.price.toFixed(2)}</span>
+                        <span className="current-price">
+                            {product.variants?.length > 1 ? 'From ' : ''}₹{product.price.toFixed(2)}
+                        </span>
                     </div>
                 </div>
             </Link>
