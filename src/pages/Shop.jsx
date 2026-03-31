@@ -64,93 +64,226 @@ const Shop = () => {
     };
 
     return (
-        <div className="container py-60" style={{ display: 'flex', gap: '30px', alignItems: 'flex-start' }}>
+        <div className="shop-page container py-60">
             {/* Sidebar Filters */}
-            <aside style={{ flex: '0 0 250px', position: 'sticky', top: '20px' }}>
-                <div style={{ padding: '20px', border: '1px solid var(--border-color)', borderRadius: '8px', backgroundColor: 'var(--white)' }}>
-                    <h3 style={{ marginBottom: '20px', paddingBottom: '10px', borderBottom: '1px solid var(--border-color)' }}>Filters</h3>
+            <aside className="shop-sidebar">
+                <div className="filter-card">
+                    <h3 className="filter-title">Filters</h3>
 
-                    <div style={{ marginBottom: '20px' }}>
-                        <h4 style={{ marginBottom: '10px', fontSize: '1rem' }}>Category</h4>
+                    <div className="filter-group">
+                        <h4 className="filter-label">Category</h4>
                         <select 
                             value={selectedCategory} 
                             onChange={(e) => updateURL('category', e.target.value)}
-                            style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+                            className="filter-select"
                         >
                             <option value="">All Categories</option>
                             {SHOP_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                         </select>
                     </div>
 
-                    <div style={{ marginBottom: '20px' }}>
-                        <h4 style={{ marginBottom: '10px', fontSize: '1rem' }}>Color</h4>
+                    <div className="filter-group">
+                        <h4 className="filter-label">Color</h4>
                         <select 
                             value={selectedColor} 
                             onChange={(e) => updateURL('color', e.target.value)}
-                            style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+                            className="filter-select"
                         >
                             <option value="">All Colors</option>
                             {AVAILABLE_COLORS.map(c => <option key={c} value={c}>{c}</option>)}
                         </select>
                     </div>
 
-                    <div style={{ marginBottom: '20px' }}>
-                        <h4 style={{ marginBottom: '10px', fontSize: '1rem' }}>Size</h4>
+                    <div className="filter-group">
+                        <h4 className="filter-label">Size</h4>
                         <select 
                             value={selectedSize} 
                             onChange={(e) => updateURL('size', e.target.value)}
-                            style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+                            className="filter-select"
                         >
                             <option value="">All Sizes</option>
                             {AVAILABLE_SIZES.map(s => <option key={s} value={s}>{s}</option>)}
                         </select>
                     </div>
 
-                    <div style={{ marginBottom: '20px' }}>
-                        <h4 style={{ marginBottom: '10px', fontSize: '1rem' }}>Shape</h4>
+                    <div className="filter-group">
+                        <h4 className="filter-label">Shape</h4>
                         <select 
                             value={selectedShape} 
                             onChange={(e) => updateURL('shape', e.target.value)}
-                            style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+                            className="filter-select"
                         >
                             <option value="">All Shapes</option>
                             {AVAILABLE_SHAPES.map(s => <option key={s} value={s}>{s}</option>)}
                         </select>
                     </div>
                     
-                    <button 
-                        onClick={handleClearFilters}
-                        style={{ width: '100%', padding: '8px', backgroundColor: '#f1f1f1', border: '1px solid #ccc', borderRadius: '4px', cursor: 'pointer', transition: '0.2s' }}
-                    >
+                    <button onClick={handleClearFilters} className="clear-btn">
                         Clear Filters
                     </button>
                 </div>
             </aside>
 
             {/* Product Grid */}
-            <main style={{ flex: 1, minWidth: 0 }}>
-                <h2 style={{ marginBottom: '20px', paddingBottom: '10px', borderBottom: '1px solid var(--border-color)' }}>
+            <main className="shop-main">
+                <h2 className="shop-title">
                     {selectedCategory || 'All Carpets'} 
-                    <span style={{ fontSize: '1rem', color: 'var(--text-light)', marginLeft: '10px', fontWeight: 'normal' }}>
+                    <span className="result-count">
                         ({filteredProducts.length} results)
                     </span>
                 </h2>
 
                 {loading ? (
-                    <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-light)' }}>Loading collection...</div>
+                    <div className="loading-state">Loading collection...</div>
                 ) : filteredProducts.length === 0 ? (
-                    <div style={{ padding: '60px', textAlign: 'center', backgroundColor: '#f9f9f9', borderRadius: '8px', border: '1px dashed #ccc' }}>
-                        <h3 style={{ color: 'var(--text-dark)', marginBottom: '10px' }}>No carpets match your exact filters.</h3>
-                        <p style={{ color: 'var(--text-light)' }}>Try clearing some filters to see more results.</p>
+                    <div className="no-results">
+                        <h3>No carpets match your exact filters.</h3>
+                        <p>Try clearing some filters to see more results.</p>
                     </div>
                 ) : (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '20px' }}>
+                    <div className="product-grid">
                         {filteredProducts.map(product => (
                             <ProductCard key={product.id} product={product} />
                         ))}
                     </div>
                 )}
             </main>
+
+            <style>{`
+                .shop-page {
+                    display: flex;
+                    gap: 40px;
+                    align-items: flex-start;
+                }
+                .shop-sidebar {
+                    flex: 0 0 260px;
+                    position: sticky;
+                    top: 100px;
+                }
+                .filter-card {
+                    padding: 24px;
+                    border: 1px solid var(--border-color);
+                    border-radius: 12px;
+                    background-color: var(--white);
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+                }
+                .filter-title {
+                    font-size: 1.25rem;
+                    margin-bottom: 24px;
+                    padding-bottom: 12px;
+                    border-bottom: 2px solid var(--secondary);
+                }
+                .filter-group {
+                    margin-bottom: 20px;
+                }
+                .filter-label {
+                    margin-bottom: 8px;
+                    font-size: 0.9rem;
+                    font-weight: 600;
+                    color: var(--text-dark);
+                    font-family: var(--font-sans);
+                }
+                .filter-select {
+                    width: 100%;
+                    padding: 10px 12px;
+                    border-radius: 6px;
+                    border: 1px solid #ddd;
+                    font-family: var(--font-sans);
+                    font-size: 0.9rem;
+                    background-color: #fff;
+                    outline: none;
+                }
+                .filter-select:focus {
+                    border-color: var(--primary);
+                }
+                .clear-btn {
+                    width: 100%;
+                    padding: 12px;
+                    background-color: var(--secondary);
+                    color: var(--text-dark);
+                    border: 1px solid #ddd;
+                    border-radius: 6px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: 0.3s;
+                    font-family: var(--font-sans);
+                }
+                .clear-btn:hover {
+                    background-color: #eee;
+                }
+                .shop-main {
+                    flex: 1;
+                    min-width: 0;
+                }
+                .shop-title {
+                    font-size: 2rem;
+                    margin-bottom: 30px;
+                    padding-bottom: 15px;
+                    border-bottom: 1px solid var(--border-color);
+                }
+                .result-count {
+                    font-size: 1rem;
+                    color: var(--text-light);
+                    margin-left: 15px;
+                    font-weight: 400;
+                }
+                .product-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                    gap: 30px;
+                }
+                .loading-state, .no-results {
+                    padding: 80px 20px;
+                    text-align: center;
+                    background-color: #f9f9f9;
+                    border-radius: 12px;
+                    border: 1px dashed #ddd;
+                }
+
+                @media (max-width: 992px) {
+                    .shop-page {
+                        flex-direction: column;
+                        gap: 30px;
+                    }
+                    .shop-sidebar {
+                        flex: none;
+                        width: 100%;
+                        position: relative;
+                        top: 0;
+                    }
+                    .filter-card {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 15px;
+                        padding: 20px;
+                    }
+                    .filter-title {
+                        grid-column: 1 / -1;
+                        margin-bottom: 10px;
+                    }
+                    .filter-group {
+                        margin-bottom: 0;
+                    }
+                    .clear-btn {
+                        grid-column: 1 / -1;
+                        margin-top: 10px;
+                    }
+                    .shop-title {
+                        font-size: 1.5rem;
+                        margin-top: 10px;
+                    }
+                }
+
+                @media (max-width: 480px) {
+                    .filter-card {
+                        grid-template-columns: 1fr;
+                    }
+                    .product-grid {
+                        grid-template-columns: 1fr;
+                        gap: 20px;
+                    }
+                }
+            `}</style>
         </div>
     );
 };
