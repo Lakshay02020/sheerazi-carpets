@@ -5,10 +5,10 @@ import ProductCard from '../components/ProductCard';
 import { useProducts } from '../context/ProductContext';
 
 const SHOP_CATEGORIES = [
-    { name: 'Hand Tufted', url: 'https://images.unsplash.com/photo-1590458897534-8b6b0d99efeb?auto=format&fit=crop&q=80&w=800' },
-    { name: 'Shaggy', url: 'https://images.unsplash.com/photo-1575414003593-eea4025db004?auto=format&fit=crop&q=80&w=800' },
+    { name: 'Hand Tufted', url: 'https://images.unsplash.com/photo-1594040226829-7f251ab46d80?auto=format&fit=crop&q=80&w=800' },
+    { name: 'Shaggy', url: 'https://images.unsplash.com/photo-1591608512476-af34daeca380?auto=format&fit=crop&q=80&w=800' },
     { name: 'Persian Silk', url: 'https://images.unsplash.com/photo-1600166898405-da9535204843?auto=format&fit=crop&q=80&w=800' },
-    { name: 'Designer', url: 'https://images.unsplash.com/photo-1620310237583-deda9d94b0d0?auto=format&fit=crop&q=80&w=800' }
+    { name: 'Designer', url: 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&q=80&w=800' }
 ];
 
 const COLORS = [
