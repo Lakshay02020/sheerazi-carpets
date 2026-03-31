@@ -49,6 +49,13 @@ const Footer = () => {
           gap: 40px;
           margin-bottom: 40px;
         }
+        @media (max-width: 768px) {
+          .footer-grid {
+            grid-template-columns: 1fr;
+            gap: 30px;
+            text-align: center;
+          }
+        }
         .footer h4 {
           font-family: var(--font-sans);
           font-weight: 600;

@@ -53,6 +53,22 @@ const Hero = () => {
           background-color: var(--white);
           color: var(--primary);
         }
+        @media (max-width: 768px) {
+          .hero {
+            height: 60vh;
+            min-height: 400px;
+          }
+          .hero h2 {
+            font-size: 2rem !important;
+          }
+          .hero p {
+            font-size: 1rem !important;
+          }
+          .btn-hero {
+            padding: 12px 30px;
+            font-size: 1rem;
+          }
+        }
       `}</style>
         </section>
     );
