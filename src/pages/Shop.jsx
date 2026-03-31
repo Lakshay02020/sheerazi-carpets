@@ -244,10 +244,12 @@ const Shop = () => {
                     .shop-page {
                         flex-direction: column;
                         gap: 30px;
+                        align-items: center; /* Center everything on mobile */
                     }
                     .shop-sidebar {
                         flex: none;
                         width: 100%;
+                        max-width: 500px; /* Limit filter width on mobile */
                         position: relative;
                         top: 0;
                     }
@@ -260,6 +262,7 @@ const Shop = () => {
                     .filter-title {
                         grid-column: 1 / -1;
                         margin-bottom: 10px;
+                        text-align: center;
                     }
                     .filter-group {
                         margin-bottom: 0;
@@ -268,19 +271,24 @@ const Shop = () => {
                         grid-column: 1 / -1;
                         margin-top: 10px;
                     }
+                    .shop-main {
+                        width: 100%;
+                    }
                     .shop-title {
                         font-size: 1.5rem;
                         margin-top: 10px;
+                        text-align: center;
+                    }
+                    .product-grid {
+                        grid-template-columns: 1fr;
+                        justify-items: center;
+                        gap: 30px;
                     }
                 }
 
                 @media (max-width: 480px) {
                     .filter-card {
                         grid-template-columns: 1fr;
-                    }
-                    .product-grid {
-                        grid-template-columns: 1fr;
-                        gap: 20px;
                     }
                 }
             `}</style>
