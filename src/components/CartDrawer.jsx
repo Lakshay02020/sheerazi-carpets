@@ -27,7 +27,12 @@ const CartDrawer = () => {
                     ) : (
                         cartItems.map(item => (
                             <div key={`${item.id}-${item.size}`} className="cart-item">
-                                <img src={item.image} alt={item.title} className="cart-item-img" />
+                                <img 
+                                    src={item.image} 
+                                    alt={item.title} 
+                                    className="cart-item-img" 
+                                    onError={(e) => { e.target.onerror = null; e.target.src = 'https://picsum.photos/seed/carpet_fallback/200/200'; }} 
+                                />
                                 <div className="cart-item-details">
                                     <h4>{item.title}</h4>
                                     <p className="size">Size: {item.size}</p>
