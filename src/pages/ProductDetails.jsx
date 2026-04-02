@@ -69,6 +69,7 @@ const ProductDetails = () => {
     const handleAddToCart = () => {
         addToCart({ 
             ...product, 
+            image: productImages[0], // Ensure a direct image string is passed
             size: selectedSize, 
             price: displayPrice, // Use variant price
             originalPrice: displayOriginalPrice, // Use variant original price
