@@ -9,6 +9,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// Health check endpoint for Render spin-down prevention
+app.get('/ping', (req, res) => {
+  res.status(200).send('pong');
+});
 // Initialize Razorpay
 // For mocking, if keys aren't set up, we won't crash immediately, but the API calls will fail.
 const razorpay = new Razorpay({
