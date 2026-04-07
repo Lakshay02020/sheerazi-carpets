@@ -27,6 +27,7 @@ const AdminAddProduct = () => {
     const [newColor, setNewColor] = useState('');
 
     const [isLoading, setIsLoading] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
     const [message, setMessage] = useState('');
     const [isSeeding, setIsSeeding] = useState(false);
     
@@ -127,6 +128,37 @@ const AdminAddProduct = () => {
             } catch (error) {
                 console.error("Error adding color: ", error);
             }
+        }
+    };
+
+    const handleImageUpload = async (e, index) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setIsUploading(true);
+        setMessage('');
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', 'Carpet Images');
+
+        try {
+            const res = await fetch('https://api.cloudinary.com/v1_1/dmhqtmk5s/image/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            
+            if (data.secure_url) {
+                handleImageUrlChange(index, data.secure_url);
+            } else {
+                console.error("Upload failed", data);
+                setMessage("Failed to upload image. Please try again.");
+            }
+        } catch (error) {
+            console.error("Error uploading image: ", error);
+            setMessage("Error connecting to image server.");
+        } finally {
+            setIsUploading(false);
         }
     };
 
@@ -411,19 +443,29 @@ const AdminAddProduct = () => {
                         </div>
 
                         <div>
-                            <label style={{ display: 'block', marginBottom: '10px' }}>Product Image Links (URLs)*</label>
+                            <label style={{ display: 'block', marginBottom: '10px' }}>Product Images* (Upload file or paste URL)</label>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                                 {imageUrls.map((url, index) => (
                                     <div key={index} style={{ display: 'flex', gap: '10px' }}>
                                         <input 
-                                            required={index === 0} 
+                                            required={index === 0 && !url} 
                                             type="url" 
                                             value={url} 
                                             onChange={(e) => handleImageUrlChange(index, e.target.value)} 
                                             className="form-control" 
                                             style={{ marginTop: 0 }}
-                                            placeholder={`Image URL ${index + 1}`} 
+                                            placeholder={`Paste URL or Upload ->`} 
                                         />
+                                        <label className="btn" style={{ cursor: 'pointer', margin: 0, padding: '0 15px', display: 'flex', alignItems: 'center', backgroundColor: '#1976d2', whiteSpace: 'nowrap' }}>
+                                            {isUploading && !url ? 'Uploading...' : 'Upload'}
+                                            <input 
+                                                type="file" 
+                                                accept="image/*" 
+                                                style={{ display: 'none' }}
+                                                onChange={(e) => handleImageUpload(e, index)}
+                                                disabled={isUploading}
+                                            />
+                                        </label>
                                         {imageUrls.length > 1 && (
                                             <button 
                                                 type="button" 
@@ -447,8 +489,8 @@ const AdminAddProduct = () => {
                             </div>
                         </div>
 
-                        <button type="submit" className="btn" disabled={isLoading} style={{ marginTop: '20px' }}>
-                            {isLoading ? 'Saving Product...' : 'Add to Store'}
+                        <button type="submit" className="btn" disabled={isLoading || isUploading} style={{ marginTop: '20px' }}>
+                            {isLoading ? 'Saving Product...' : (isUploading ? 'Waiting for upload...' : 'Add to Store')}
                         </button>
                     </form>
                 </div>
