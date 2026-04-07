@@ -70,7 +70,7 @@ const AdminEditProduct = () => {
                 console.error("Error fetching options: ", error);
             }
         };
-        fetchOptions();
+        fetchMetadata();
     }, []);
 
     // Load Existing Product Data
