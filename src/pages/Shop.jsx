@@ -45,15 +45,35 @@ const Shop = () => {
             if (selectedCategory && product.category?.toLowerCase() !== selectedCategory.toLowerCase()) return false;
             
             if (selectedColor) {
-                // Support both legacy products (no colors array) and new products
-                if (!product.colors || !product.colors.includes(selectedColor)) return false;
+                if (!product.colors) return false;
+                // handle either selectedColor string ("Red") or a stringified JSON
+                let targetColorName = selectedColor;
+                try {
+                    const parsed = JSON.parse(selectedColor);
+                    if (parsed && typeof parsed === 'object' && parsed.name) targetColorName = parsed.name;
+                } catch (e) {
+                    // It's a plain string like "Red", that's fine
+                }
+                const matchColor = product.colors.some(c => {
+                    const cName = typeof c === 'object' && c !== null ? c.name : String(c);
+                    return cName === targetColorName;
+                });
+                if (!matchColor) return false;
             }
             
             if (selectedSize) {
-                if (!product.sizes || !product.sizes.includes(selectedSize)) return false;
+                if (!product.sizes) return false;
+                const matchSize = product.sizes.some(s => {
+                    const sName = typeof s === 'object' && s !== null ? s.name : String(s);
+                    return sName === selectedSize;
+                });
+                if (!matchSize) return false;
             }
 
-            if (selectedShape && product.shape !== selectedShape) return false;
+            if (selectedShape) {
+                const pShape = typeof product.shape === 'object' && product.shape !== null ? product.shape.name : String(product.shape);
+                if (pShape !== selectedShape) return false;
+            }
 
             return true;
         });

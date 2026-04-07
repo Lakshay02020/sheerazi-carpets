@@ -275,8 +275,11 @@ const AdminAddProduct = () => {
                             <div>
                                 <label>Shape*</label>
                                 <div style={{ display: 'flex', gap: '10px', marginTop: '5px' }}>
-                                    <select value={shape} onChange={(e) => setShape(e.target.value)} className="form-control" style={{ backgroundColor: 'white', flex: 1, marginTop: 0 }}>
-                                        {availableShapes.map(s => <option key={s} value={s}>{s}</option>)}
+                                    <select value={String(typeof shape === 'object' ? shape.name || JSON.stringify(shape) : shape)} onChange={(e) => setShape(e.target.value)} className="form-control" style={{ backgroundColor: 'white', flex: 1, marginTop: 0 }}>
+                                        {availableShapes.map((s, idx) => {
+                                            const sName = typeof s === 'object' && s !== null ? s.name || JSON.stringify(s) : String(s);
+                                            return <option key={`shape-${idx}`} value={sName}>{sName}</option>;
+                                        })}
                                     </select>
                                 </div>
                                 <div style={{ display: 'flex', gap: '5px', marginTop: '10px' }}>
@@ -296,20 +299,27 @@ const AdminAddProduct = () => {
                         <div>
                             <label style={{ display: 'block', marginBottom: '8px' }}>Available Colors</label>
                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                                {availableColors.map(color => (
-                                    <label key={color} style={{ display: 'inline-flex', alignItems: 'center', background: selectedColors.includes(color) ? 'var(--primary)' : '#f1f1f1', color: selectedColors.includes(color) ? 'white' : 'black', padding: '4px 10px', borderRadius: '20px', cursor: 'pointer', border: '1px solid #ccc' }}>
-                                        <input 
-                                            type="checkbox" 
-                                            style={{ display: 'none' }}
-                                            checked={selectedColors.includes(color)}
-                                            onChange={(e) => {
-                                                if (e.target.checked) setSelectedColors([...selectedColors, color]);
-                                                else setSelectedColors(selectedColors.filter(c => c !== color));
-                                            }}
-                                        />
-                                        <span style={{ fontSize: '0.85rem' }}>{color}</span>
-                                    </label>
-                                ))}
+                                {availableColors.map((color, idx) => {
+                                    const colorName = typeof color === 'object' && color !== null ? color.name || JSON.stringify(color) : String(color);
+                                    const colorHex = typeof color === 'object' && color !== null ? color.hex : null;
+                                    return (
+                                        <label key={`color-${idx}`} style={{ display: 'inline-flex', alignItems: 'center', background: selectedColors.includes(color) ? 'var(--primary)' : '#f1f1f1', color: selectedColors.includes(color) ? 'white' : 'black', padding: '4px 10px', borderRadius: '20px', cursor: 'pointer', border: '1px solid #ccc' }}>
+                                            <input 
+                                                type="checkbox" 
+                                                style={{ display: 'none' }}
+                                                checked={selectedColors.includes(color)}
+                                                onChange={(e) => {
+                                                    if (e.target.checked) setSelectedColors([...selectedColors, color]);
+                                                    else setSelectedColors(selectedColors.filter(c => c !== color));
+                                                }}
+                                            />
+                                            {colorHex && (
+                                                <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: colorHex, marginRight: '6px', border: '1px solid rgba(0,0,0,0.1)' }}></span>
+                                            )}
+                                            <span style={{ fontSize: '0.85rem' }}>{colorName}</span>
+                                        </label>
+                                    );
+                                })}
                             </div>
                             <div style={{ display: 'flex', gap: '5px', marginTop: '10px' }}>
                                 <input 
@@ -327,67 +337,70 @@ const AdminAddProduct = () => {
                         <div>
                             <label style={{ display: 'block', marginBottom: '8px' }}>Available Sizes & Pricing*</label>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                                {availableSizes.map(size => (
-                                    <div key={size} style={{ border: '1px solid #eee', padding: '15px', borderRadius: '8px', background: selectedSizes.includes(size) ? '#fbfbfb' : 'transparent' }}>
-                                        <label style={{ display: 'inline-flex', alignItems: 'center', background: selectedSizes.includes(size) ? 'var(--primary)' : '#f1f1f1', color: selectedSizes.includes(size) ? 'white' : 'black', padding: '6px 12px', borderRadius: '20px', cursor: 'pointer', border: '1px solid #ccc' }}>
-                                            <input 
-                                                type="checkbox" 
-                                                style={{ display: 'none' }}
-                                                checked={selectedSizes.includes(size)}
-                                                onChange={(e) => {
-                                                    if (e.target.checked) {
-                                                        setSelectedSizes([...selectedSizes, size]);
-                                                        // Initialize price with the global price if empty
-                                                        if (!variantPrices[size]) {
-                                                            setVariantPrices({
-                                                                ...variantPrices,
-                                                                [size]: { price: price, originalPrice: originalPrice }
-                                                            });
+                                {availableSizes.map((size, idx) => {
+                                    const sizeName = typeof size === 'object' && size !== null ? size.name || JSON.stringify(size) : String(size);
+                                    return (
+                                        <div key={`size-${idx}`} style={{ border: '1px solid #eee', padding: '15px', borderRadius: '8px', background: selectedSizes.includes(size) ? '#fbfbfb' : 'transparent' }}>
+                                            <label style={{ display: 'inline-flex', alignItems: 'center', background: selectedSizes.includes(size) ? 'var(--primary)' : '#f1f1f1', color: selectedSizes.includes(size) ? 'white' : 'black', padding: '6px 12px', borderRadius: '20px', cursor: 'pointer', border: '1px solid #ccc' }}>
+                                                <input 
+                                                    type="checkbox" 
+                                                    style={{ display: 'none' }}
+                                                    checked={selectedSizes.includes(size)}
+                                                    onChange={(e) => {
+                                                        if (e.target.checked) {
+                                                            setSelectedSizes([...selectedSizes, size]);
+                                                            // Initialize price with the global price if empty
+                                                            if (!variantPrices[size]) {
+                                                                setVariantPrices({
+                                                                    ...variantPrices,
+                                                                    [size]: { price: price, originalPrice: originalPrice }
+                                                                });
+                                                            }
+                                                        } else {
+                                                            setSelectedSizes(selectedSizes.filter(s => s !== size));
                                                         }
-                                                    } else {
-                                                        setSelectedSizes(selectedSizes.filter(s => s !== size));
-                                                    }
-                                                }}
-                                            />
-                                            <span style={{ fontSize: '0.9rem', fontWeight: '600' }}>{size}</span>
-                                        </label>
+                                                    }}
+                                                />
+                                                <span style={{ fontSize: '0.9rem', fontWeight: '600' }}>{sizeName}</span>
+                                            </label>
 
-                                        {selectedSizes.includes(size) && (
-                                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginTop: '12px' }}>
-                                                <div>
-                                                    <label style={{ fontSize: '0.75rem', color: '#666' }}>Price for {size} (₹)*</label>
-                                                    <input 
-                                                        required 
-                                                        type="number" 
-                                                        step="0.01" 
-                                                        value={variantPrices[size]?.price || ''} 
-                                                        onChange={(e) => setVariantPrices({
-                                                            ...variantPrices,
-                                                            [size]: { ...variantPrices[size], price: e.target.value }
-                                                        })}
-                                                        className="form-control" 
-                                                        style={{ padding: '8px', fontSize: '0.9rem' }}
-                                                    />
+                                            {selectedSizes.includes(size) && (
+                                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginTop: '12px' }}>
+                                                    <div>
+                                                        <label style={{ fontSize: '0.75rem', color: '#666' }}>Price for {sizeName} (₹)*</label>
+                                                        <input 
+                                                            required 
+                                                            type="number" 
+                                                            step="0.01" 
+                                                            value={variantPrices[size]?.price || ''} 
+                                                            onChange={(e) => setVariantPrices({
+                                                                ...variantPrices,
+                                                                [size]: { ...variantPrices[size], price: e.target.value }
+                                                            })}
+                                                            className="form-control" 
+                                                            style={{ padding: '8px', fontSize: '0.9rem' }}
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label style={{ fontSize: '0.75rem', color: '#666' }}>Original Price (₹)</label>
+                                                        <input 
+                                                            type="number" 
+                                                            step="0.01" 
+                                                            value={variantPrices[size]?.originalPrice || ''} 
+                                                            onChange={(e) => setVariantPrices({
+                                                                ...variantPrices,
+                                                                [size]: { ...variantPrices[size], originalPrice: e.target.value }
+                                                            })}
+                                                            className="form-control" 
+                                                            style={{ padding: '8px', fontSize: '0.9rem' }}
+                                                            placeholder="Optional"
+                                                        />
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <label style={{ fontSize: '0.75rem', color: '#666' }}>Original Price (₹)</label>
-                                                    <input 
-                                                        type="number" 
-                                                        step="0.01" 
-                                                        value={variantPrices[size]?.originalPrice || ''} 
-                                                        onChange={(e) => setVariantPrices({
-                                                            ...variantPrices,
-                                                            [size]: { ...variantPrices[size], originalPrice: e.target.value }
-                                                        })}
-                                                        className="form-control" 
-                                                        style={{ padding: '8px', fontSize: '0.9rem' }}
-                                                        placeholder="Optional"
-                                                    />
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                ))}
+                                            )}
+                                        </div>
+                                    );
+                                })}
                             </div>
                             <div style={{ display: 'flex', gap: '5px', marginTop: '10px' }}>
                                 <input 
