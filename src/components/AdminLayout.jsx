@@ -25,6 +25,20 @@ const AdminLayout = () => {
                         Manage Products
                     </NavLink>
                     <NavLink 
+                        to="/admin/categories" 
+                        style={({isActive}) => ({
+                            padding: '10px 15px', 
+                            borderRadius: '6px', 
+                            textDecoration: 'none', 
+                            color: isActive ? 'var(--white)' : 'var(--text-dark)', 
+                            backgroundColor: isActive ? 'var(--primary)' : 'transparent',
+                            fontWeight: isActive ? '600' : '400',
+                            transition: '0.2s'
+                        })}
+                    >
+                        Manage Categories
+                    </NavLink>
+                    <NavLink 
                         to="/admin/add" 
                         style={({isActive}) => ({
                             padding: '10px 15px', 

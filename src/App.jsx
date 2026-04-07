@@ -7,6 +7,7 @@ import ProductDetails from './pages/ProductDetails';
 import Checkout from './pages/Checkout';
 import AdminLayout from './components/AdminLayout';
 import AdminManageProducts from './pages/AdminManageProducts';
+import AdminManageCategories from './pages/AdminManageCategories';
 import AdminEditProduct from './pages/AdminEditProduct';
 import AdminAddProduct from './pages/AdminAddProduct';
 import AdminLogin from './pages/AdminLogin';
@@ -39,6 +40,7 @@ function App() {
               }>
                 <Route index element={<Navigate to="manage" replace />} />
                 <Route path="manage" element={<AdminManageProducts />} />
+                <Route path="categories" element={<AdminManageCategories />} />
                 <Route path="add" element={<AdminAddProduct />} />
                 <Route path="edit/:id" element={<AdminEditProduct />} />
               </Route>

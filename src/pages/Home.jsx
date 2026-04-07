@@ -3,13 +3,8 @@ import { Link } from 'react-router-dom';
 import Hero from '../components/Hero';
 import ProductCard from '../components/ProductCard';
 import { useProducts } from '../context/ProductContext';
-
-const SHOP_CATEGORIES = [
-    { name: 'Hand Tufted', url: 'https://images.unsplash.com/photo-1594040226829-7f251ab46d80?auto=format&fit=crop&q=80&w=800' },
-    { name: 'Shaggy', url: 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&q=80&w=800' },
-    { name: 'Persian Silk', url: 'https://images.unsplash.com/photo-1600166898405-da9535204843?auto=format&fit=crop&q=80&w=800' },
-    { name: 'Designer', url: 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&q=80&w=800' }
-];
+import { db } from '../firebase/config';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 const COLORS = [
     { name: 'Red', hex: '#d32f2f' },
@@ -20,9 +15,35 @@ const COLORS = [
     { name: 'Green', hex: '#388e3c' }
 ];
 
+const DEFAULT_CATEGORIES = [
+    { name: 'Hand Tufted', url: 'https://images.unsplash.com/photo-1594040226829-7f251ab46d80?auto=format&fit=crop&q=80&w=800' },
+    { name: 'Shaggy', url: 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&q=80&w=800' },
+    { name: 'Persian Silk', url: 'https://images.unsplash.com/photo-1600166898405-da9535204843?auto=format&fit=crop&q=80&w=800' },
+    { name: 'Designer', url: 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&q=80&w=800' }
+];
+
 const Home = () => {
-    // We now use the global memory cache instead of fetching manually
     const { products, loading } = useProducts();
+    const [shopCategories, setShopCategories] = React.useState([]);
+
+    React.useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const docRef = doc(db, 'metadata', 'categories');
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists() && docSnap.data().items) {
+                    setShopCategories(docSnap.data().items);
+                } else {
+                    await setDoc(docRef, { items: DEFAULT_CATEGORIES }, { merge: true });
+                    setShopCategories(DEFAULT_CATEGORIES);
+                }
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+                setShopCategories(DEFAULT_CATEGORIES);
+            }
+        };
+        fetchCategories();
+    }, []);
 
     // Just show top 8 newest products
     const trendingProducts = products.slice(0, 8);
@@ -39,14 +60,18 @@ const Home = () => {
                 </div>
                 
                 <div className="category-grid">
-                    {SHOP_CATEGORIES.map(cat => (
-                        <Link to={`/shop?category=${encodeURIComponent(cat.name)}`} key={cat.name} className="category-card">
+                    {shopCategories.length === 0 ? (
+                        <p style={{ textAlign: 'center', gridColumn: '1 / -1', color: 'var(--text-light)' }}>Loading categories...</p>
+                    ) : (
+                        shopCategories.map(cat => (
+                            <Link to={`/shop?category=${encodeURIComponent(cat.name)}`} key={cat.name} className="category-card">
                             <img src={cat.url} alt={cat.name} />
                             <div className="category-overlay">
                                 <h3>{cat.name}</h3>
                             </div>
                         </Link>
-                    ))}
+                        ))
+                    )}
                 </div>
             </section>
 

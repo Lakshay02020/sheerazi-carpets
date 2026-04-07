@@ -8,8 +8,10 @@ import { useAuth } from '../context/AuthContext';
 const AdminAddProduct = () => {
     const [title, setTitle] = useState('');
     const [price, setPrice] = useState('');
-    const [originalPrice, setOriginalPrice] = useState('');
+    const [description, setDescription] = useState('');
     const [category, setCategory] = useState('');
+    const [adminCategories, setAdminCategories] = useState([]);
+    const [originalPrice, setOriginalPrice] = useState('');
     const [imageUrls, setImageUrls] = useState(['']); // Array of image URLs
     const [shape, setShape] = useState('Rectangular');
     const [selectedColors, setSelectedColors] = useState([]);
@@ -33,16 +35,16 @@ const AdminAddProduct = () => {
     
     // Fetch and sync global metadata from Firestore
     useEffect(() => {
-        const fetchMetadata = async () => {
+        const fetchData = async () => {
             try {
-                const docRef = doc(db, 'metadata', 'product_options');
-                const docSnap = await getDoc(docRef);
-                
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    setAvailableColors(data.colors || []);
-                    setAvailableSizes(data.sizes || []);
-                    setAvailableShapes(data.shapes || []);
+                // Fetch colors, sizes, shapes...
+                const optionsRef = doc(db, 'metadata', 'product_options');
+                const optionsSnap = await getDoc(optionsRef);
+                if (optionsSnap.exists()) {
+                    const data = optionsSnap.data();
+                    if (data.colors) setAvailableColors(data.colors);
+                    if (data.sizes) setAvailableSizes(data.sizes);
+                    if (data.shapes) setAvailableShapes(data.shapes);
                 } else {
                     // Initialize if not present
                     const initialData = {
@@ -50,16 +52,25 @@ const AdminAddProduct = () => {
                         sizes: ['3x5 ft', '4x6 ft', '5x7 ft', '5x8 ft', '6x8 ft', '6x9 ft', '8x10 ft', '9x12 ft'],
                         shapes: ['Rectangular', 'Round', 'Irregular']
                     };
-                    await setDoc(docRef, initialData);
+                    await setDoc(optionsRef, initialData);
                     setAvailableColors(initialData.colors);
                     setAvailableSizes(initialData.sizes);
                     setAvailableShapes(initialData.shapes);
+                }
+                
+                // Fetch Categories
+                const catRef = doc(db, 'metadata', 'categories');
+                const catSnap = await getDoc(catRef);
+                if (catSnap.exists() && catSnap.data().items) {
+                    const fetchedCats = catSnap.data().items;
+                    setAdminCategories(fetchedCats);
+                    if(fetchedCats.length > 0) setCategory(fetchedCats[0].name);
                 }
             } catch (error) {
                 console.error("Error fetching metadata: ", error);
             }
         };
-        fetchMetadata();
+        fetchData();
     }, []);
 
     const handleAddImageUrl = () => {
@@ -297,7 +308,11 @@ const AdminAddProduct = () => {
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px' }}>
                             <div>
                                 <label>Category*</label>
-                                <input required type="text" value={category} onChange={(e) => setCategory(e.target.value)} className="form-control" placeholder="e.g. Shaggy, Hand Tufted" />
+                                <select required value={category} onChange={(e) => setCategory(e.target.value)} className="form-control">
+                                    {adminCategories.map(cat => (
+                                        <option key={cat.name} value={cat.name}>{cat.name}</option>
+                                    ))}
+                                </select>
                             </div>
                             <div>
                                 <label>Shape*</label>

@@ -11,6 +11,7 @@ const AdminEditProduct = () => {
     const [price, setPrice] = useState('');
     const [originalPrice, setOriginalPrice] = useState('');
     const [category, setCategory] = useState('');
+    const [adminCategories, setAdminCategories] = useState([]);
     const [imageUrls, setImageUrls] = useState(['']); // Array of image URLs
     const [shape, setShape] = useState('Rectangular');
     const [selectedColors, setSelectedColors] = useState([]);
@@ -53,14 +54,23 @@ const AdminEditProduct = () => {
                     };
                     await setDoc(docRef, initialData);
                     setAvailableColors(initialData.colors);
-                    setAvailableSizes(initialData.sizes);
-                    setAvailableShapes(initialData.shapes);
+                    setAvailableSizes(initialData.sizes || []);
+                    setAvailableShapes(initialData.shapes || []);
+                }
+                
+                // Fetch Categories
+                const catRef = doc(db, 'metadata', 'categories');
+                const catSnap = await getDoc(catRef);
+                if (catSnap.exists() && catSnap.data().items) {
+                    const fetchedCats = catSnap.data().items;
+                    setAdminCategories(fetchedCats);
+                    // Don't auto-set category here because the fetched product data handles it!
                 }
             } catch (error) {
-                console.error("Error fetching metadata: ", error);
+                console.error("Error fetching options: ", error);
             }
         };
-        fetchMetadata();
+        fetchOptions();
     }, []);
 
     // Load Existing Product Data
@@ -307,7 +317,11 @@ const AdminEditProduct = () => {
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px' }}>
                             <div>
                                 <label>Category*</label>
-                                <input required type="text" value={category} onChange={(e) => setCategory(e.target.value)} className="form-control" placeholder="e.g. Shaggy, Hand Tufted" />
+                                <select required value={category} onChange={(e) => setCategory(e.target.value)} className="form-control">
+                                    {adminCategories.length > 0 ? adminCategories.map(cat => (
+                                        <option key={cat.name} value={cat.name}>{cat.name}</option>
+                                    )) : <option value={category}>{category}</option>}
+                                </select>
                             </div>
                             <div>
                                 <label>Shape*</label>
