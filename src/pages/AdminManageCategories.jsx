@@ -13,6 +13,7 @@ const AdminManageCategories = () => {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isUploading, setIsUploading] = useState(false);
+    const [uploadingIndex, setUploadingIndex] = useState(null);
     
     const [newName, setNewName] = useState('');
     const [newImageUrl, setNewImageUrl] = useState('');
@@ -37,11 +38,12 @@ const AdminManageCategories = () => {
         fetchCategories();
     }, []);
 
-    const handleImageUpload = async (e) => {
-        const file = e.target.files[0];
+    const handleImageUpload = async (file, index = null) => {
         if (!file) return;
 
-        setIsUploading(true);
+        if (index !== null) setUploadingIndex(index);
+        else setIsUploading(true);
+
         const formData = new FormData();
         formData.append('file', file);
         formData.append('upload_preset', 'Carpet Images');
@@ -53,13 +55,21 @@ const AdminManageCategories = () => {
             });
             const data = await res.json();
             if (data.secure_url) {
-                setNewImageUrl(data.secure_url);
+                if (index !== null) {
+                    const updatedList = [...categories];
+                    updatedList[index].url = data.secure_url;
+                    await updateDoc(doc(db, 'metadata', 'categories'), { items: updatedList });
+                    setCategories(updatedList);
+                } else {
+                    setNewImageUrl(data.secure_url);
+                }
             }
         } catch (error) {
             console.error("Error uploading image: ", error);
             alert("Error connecting to image server.");
         } finally {
-            setIsUploading(false);
+            if (index !== null) setUploadingIndex(null);
+            else setIsUploading(false);
         }
     };
 
@@ -114,7 +124,7 @@ const AdminManageCategories = () => {
                             <input required type="url" value={newImageUrl} onChange={e => setNewImageUrl(e.target.value)} className="form-control" style={{ marginTop: 0 }} placeholder="Paste a link or click Upload ->" />
                             <label className="btn" style={{ cursor: 'pointer', margin: 0, padding: '0 15px', display: 'flex', alignItems: 'center', backgroundColor: '#1976d2', whiteSpace: 'nowrap' }}>
                                 {isUploading ? 'Uploading...' : 'Upload Image'}
-                                <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageUpload} disabled={isUploading} />
+                                <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageUpload(e.target.files[0], null)} disabled={isUploading} />
                             </label>
                         </div>
                     </div>
@@ -141,7 +151,11 @@ const AdminManageCategories = () => {
                                         <img src={cat.url} alt={cat.name} style={{ width: '100px', height: '60px', objectFit: 'cover', borderRadius: '4px' }} />
                                     </td>
                                     <td style={{ padding: '15px', fontWeight: '500' }}>{cat.name}</td>
-                                    <td style={{ padding: '15px', textAlign: 'right' }}>
+                                    <td style={{ padding: '15px', textAlign: 'right', display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                                        <label className="btn" style={{ padding: '6px 12px', fontSize: '0.85rem', backgroundColor: '#1976d2', cursor: 'pointer', margin: 0, display: 'inline-flex', alignItems: 'center' }}>
+                                            {uploadingIndex === idx ? 'Uploading...' : 'Edit Image'}
+                                            <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageUpload(e.target.files[0], idx)} disabled={uploadingIndex === idx} />
+                                        </label>
                                         <button onClick={() => handleDeleteCategory(idx)} className="btn" style={{ padding: '6px 12px', fontSize: '0.85rem', backgroundColor: '#e53935' }}>
                                             Delete
                                         </button>
