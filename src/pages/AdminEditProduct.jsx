@@ -277,7 +277,7 @@ const AdminEditProduct = () => {
                 <h1 style={{ margin: 0 }}>Edit Carpet</h1>
             </div>
             
-            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 800px)', justifyContent: 'center', gap: '40px' }}>
+            <div style={{ maxWidth: '800px', margin: '0 auto', width: '100%' }}>
                 <div style={{ padding: '30px', border: '1px solid var(--border-color)', borderRadius: '8px', backgroundColor: 'var(--white)' }}>
                     <h2 style={{ marginBottom: '20px' }}>Product Details</h2>
                     
@@ -293,7 +293,7 @@ const AdminEditProduct = () => {
                             <input required type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="form-control" placeholder="e.g. Royal Persian Rug" />
                         </div>
                         
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px' }}>
                             <div>
                                 <label>Sale Price (₹)*</label>
                                 <input required type="number" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} className="form-control" />
@@ -304,7 +304,7 @@ const AdminEditProduct = () => {
                             </div>
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px' }}>
                             <div>
                                 <label>Category*</label>
                                 <input required type="text" value={category} onChange={(e) => setCategory(e.target.value)} className="form-control" placeholder="e.g. Shaggy, Hand Tufted" />
@@ -402,7 +402,7 @@ const AdminEditProduct = () => {
                                             </label>
 
                                             {selectedSizes.includes(size) && (
-                                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginTop: '12px' }}>
+                                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '15px', marginTop: '12px' }}>
                                                     <div>
                                                         <label style={{ fontSize: '0.75rem', color: '#666' }}>Price for {sizeName} (₹)*</label>
                                                         <input 

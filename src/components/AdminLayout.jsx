@@ -6,8 +6,8 @@ const AdminLayout = () => {
     const { logout } = useAuth();
 
     return (
-        <div className="admin-layout" style={{ display: 'flex', minHeight: 'calc(100vh - 80px)' }}>
-            <aside className="admin-sidebar" style={{ width: '250px', backgroundColor: 'var(--secondary)', borderRight: '1px solid var(--border-color)', padding: '30px 20px', display: 'flex', flexDirection: 'column' }}>
+        <div className="admin-layout">
+            <aside className="admin-sidebar">
                 <h3 style={{ marginBottom: '30px', fontSize: '1.2rem', fontWeight: 'bold' }}>Admin Dashboard</h3>
                 <nav style={{ display: 'flex', flexDirection: 'column', gap: '15px', flex: 1 }}>
                     <NavLink 
@@ -45,9 +45,44 @@ const AdminLayout = () => {
                     </button>
                 </div>
             </aside>
-            <main className="admin-content" style={{ flex: 1, padding: '40px', backgroundColor: '#f9f9f9' }}>
+            <main className="admin-content">
                 <Outlet />
             </main>
+            <style>{`
+                .admin-layout {
+                    display: flex;
+                    flex-direction: row;
+                    min-height: calc(100vh - 80px);
+                }
+                .admin-sidebar {
+                    width: 250px;
+                    background-color: var(--secondary);
+                    border-right: 1px solid var(--border-color);
+                    padding: 30px 20px;
+                    display: flex;
+                    flex-direction: column;
+                }
+                .admin-content {
+                    flex: 1;
+                    padding: 40px;
+                    background-color: #f9f9f9;
+                    overflow-x: hidden;
+                }
+                @media (max-width: 768px) {
+                    .admin-layout {
+                        flex-direction: column;
+                    }
+                    .admin-sidebar {
+                        width: 100%;
+                        border-right: none;
+                        border-bottom: 1px solid var(--border-color);
+                        padding: 20px;
+                    }
+                    .admin-content {
+                        padding: 15px;
+                    }
+                }
+            `}</style>
         </div>
     );
 };
