@@ -1,10 +1,13 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import ProductDetails from './pages/ProductDetails';
 import Checkout from './pages/Checkout';
+import AdminLayout from './components/AdminLayout';
+import AdminManageProducts from './pages/AdminManageProducts';
+import AdminEditProduct from './pages/AdminEditProduct';
 import AdminAddProduct from './pages/AdminAddProduct';
 import AdminLogin from './pages/AdminLogin';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -31,9 +34,14 @@ function App() {
               <Route path="/admin-login" element={<AdminLogin />} />
               <Route path="/admin" element={
                 <ProtectedRoute>
-                  <AdminAddProduct />
+                  <AdminLayout />
                 </ProtectedRoute>
-              } />
+              }>
+                <Route index element={<Navigate to="manage" replace />} />
+                <Route path="manage" element={<AdminManageProducts />} />
+                <Route path="add" element={<AdminAddProduct />} />
+                <Route path="edit/:id" element={<AdminEditProduct />} />
+              </Route>
             </Routes>
           </main>
           <Footer />

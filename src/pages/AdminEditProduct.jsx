@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase/config';
-import { collection, addDoc, doc, getDoc, setDoc, updateDoc, arrayUnion } from 'firebase/firestore';
-import { products as mockProducts } from '../data/mockProducts';
+import { collection, doc, getDoc, setDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
+import { useParams, useNavigate } from 'react-router-dom';
 
-
-const AdminAddProduct = () => {
+const AdminEditProduct = () => {
+    const { id } = useParams();
+    const navigate = useNavigate();
     const [title, setTitle] = useState('');
     const [price, setPrice] = useState('');
     const [originalPrice, setOriginalPrice] = useState('');
@@ -60,6 +61,46 @@ const AdminAddProduct = () => {
         };
         fetchMetadata();
     }, []);
+
+    // Load Existing Product Data
+    useEffect(() => {
+        const fetchProductData = async () => {
+            if (!id) return;
+            try {
+                const docRef = doc(db, 'products', id);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    setTitle(data.title || '');
+                    setPrice(data.price || '');
+                    setOriginalPrice(data.originalPrice || '');
+                    setCategory(data.category || '');
+                    setImageUrls(data.images && data.images.length > 0 ? data.images : ['']);
+                    setShape(data.shape || 'Rectangular');
+                    setSelectedColors(data.colors || []);
+                    setSelectedSizes(data.sizes || []);
+                    
+                    const prices = {};
+                    if (data.variants) {
+                        data.variants.forEach(v => {
+                            prices[v.size] = { price: v.price || '', originalPrice: v.originalPrice || '' };
+                        });
+                    } else if (data.sizes) {
+                        data.sizes.forEach(s => {
+                            prices[s] = { price: data.price || '', originalPrice: data.originalPrice || '' };
+                        });
+                    }
+                    setVariantPrices(prices);
+                } else {
+                    setMessage('Product not found.');
+                }
+            } catch (error) {
+                console.error("Error loading product: ", error);
+                setMessage("Failed to load product data.");
+            }
+        };
+        fetchProductData();
+    }, [id]);
 
     const handleAddImageUrl = () => {
         setImageUrls([...imageUrls, '']);
@@ -161,7 +202,7 @@ const AdminAddProduct = () => {
                 ? Math.max(...variants.filter(v => v.originalPrice).map(v => v.originalPrice))
                 : (originalPrice ? parseFloat(originalPrice) : null);
 
-            // 2. Save product info to Firestore directly
+            // 2. Update product info in Firestore directly
             const productData = {
                 title,
                 vendor: 'FINE AND ART CARPETS',
@@ -173,13 +214,13 @@ const AdminAddProduct = () => {
                 sizes: selectedSizes, // Keep for legacy/search
                 variants: variants, // New variant structure
                 images: validUrls, // Use the array of valid URLs
-                rating: 5.0, // Default rating for new products
-                createdAt: new Date().getTime()
+                updatedAt: new Date().getTime()
             };
 
-            await addDoc(collection(db, 'products'), productData);
+            await updateDoc(doc(db, 'products', id), productData);
 
-            setMessage('Product added successfully!');
+            setMessage('Product updated successfully!');
+            setTimeout(() => navigate('/admin/manage'), 1500);
             // Reset form
             setTitle('');
             setPrice('');
@@ -198,45 +239,14 @@ const AdminAddProduct = () => {
         }
     };
 
-    const handleSeedMockData = async () => {
-        setIsSeeding(true);
-        setMessage('');
-        try {
-            let addedCount = 0;
-            for (const product of mockProducts) {
-                const productData = {
-                    title: product.title,
-                    vendor: product.vendor,
-                    price: product.price,
-                    originalPrice: product.originalPrice,
-                    category: product.category,
-                    images: product.images || [product.image], // Support both old and new format
-                    sizes: product.sizes || ['3x5 ft', '5x8 ft', '8x10 ft'],
-                    colors: product.colors || ['Beige', 'Red'],
-                    shape: product.shape || 'Rectangular',
-                    rating: product.rating,
-                    createdAt: new Date().getTime()
-                };
-                await addDoc(collection(db, 'products'), productData);
-                addedCount++;
-            }
-            setMessage(`Successfully seeded ${addedCount} initial products to Live Database!`);
-        } catch (error) {
-            console.error("Error seeding data: ", error);
-            setMessage(`Seeding Error: ${error.message}`);
-        } finally {
-            setIsSeeding(false);
-        }
-    };
-
     return (
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-                <h1 style={{ margin: 0 }}>Add New Carpet</h1>
+                <h1 style={{ margin: 0 }}>Edit Carpet</h1>
             </div>
             
-            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 600px)', justifyContent: 'center', gap: '40px' }}>
-                <div style={{ padding: '30px', border: '1px solid var(--border-color)', borderRadius: '8px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 800px)', justifyContent: 'center', gap: '40px' }}>
+                <div style={{ padding: '30px', border: '1px solid var(--border-color)', borderRadius: '8px', backgroundColor: 'var(--white)' }}>
                     <h2 style={{ marginBottom: '20px' }}>Product Details</h2>
                     
                     {message && (
@@ -448,25 +458,12 @@ const AdminAddProduct = () => {
                         </div>
 
                         <button type="submit" className="btn" disabled={isLoading} style={{ marginTop: '20px' }}>
-                            {isLoading ? 'Saving Product...' : 'Add to Store'}
+                            {isLoading ? 'Saving Product...' : 'Update Properties'}
                         </button>
                     </form>
                 </div>
 
-                <div style={{ padding: '30px', backgroundColor: 'var(--secondary)', borderRadius: '8px', textAlign: 'center' }}>
-                    <h3>First Time Setup</h3>
-                    <p style={{ marginTop: '10px', marginBottom: '20px', color: 'var(--text-light)' }}>
-                        If your live database is currently empty, you can safely copy the 4 original starter products into it automatically.
-                    </p>
-                    <button 
-                        className="btn" 
-                        onClick={handleSeedMockData} 
-                        disabled={isSeeding}
-                        style={{ backgroundColor: '#2e7d32' }}
-                    >
-                        {isSeeding ? 'Seeding...' : 'Seed Starter Products'}
-                    </button>
-                </div>
+
             </div>
 
             <style>{`
@@ -478,4 +475,4 @@ const AdminAddProduct = () => {
     );
 };
 
-export default AdminAddProduct;
+export default AdminEditProduct;
