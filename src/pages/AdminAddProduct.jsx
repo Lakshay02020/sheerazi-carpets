@@ -3,22 +3,26 @@ import { db } from '../firebase/config';
 import { collection, addDoc, doc, getDoc, setDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { products as mockProducts } from '../data/mockProducts';
 import { useAuth } from '../context/AuthContext';
+import { useLocation } from 'react-router-dom';
 
 
 const AdminAddProduct = () => {
-    const [title, setTitle] = useState('');
-    const [price, setPrice] = useState('');
-    const [description, setDescription] = useState('');
-    const [category, setCategory] = useState('');
+    const location = useLocation();
+    const dupStr = location.state?.duplicateFrom || null;
+
+    const [title, setTitle] = useState(dupStr ? `Copy of ${dupStr.title}` : '');
+    const [price, setPrice] = useState(dupStr?.price || '');
+    const [description, setDescription] = useState(dupStr?.description || '');
+    const [category, setCategory] = useState(dupStr?.category || '');
     const [adminCategories, setAdminCategories] = useState([]);
-    const [originalPrice, setOriginalPrice] = useState('');
-    const [imageUrls, setImageUrls] = useState(['']); // Array of image URLs
-    const [shape, setShape] = useState('Rectangular');
-    const [selectedColors, setSelectedColors] = useState([]);
-    const [selectedSizes, setSelectedSizes] = useState([]);
+    const [originalPrice, setOriginalPrice] = useState(dupStr?.originalPrice || '');
+    const [imageUrls, setImageUrls] = useState(dupStr?.images && dupStr.images.length > 0 ? dupStr.images : ['']);
+    const [shape, setShape] = useState(dupStr?.shape || 'Rectangular');
+    const [selectedColors, setSelectedColors] = useState(dupStr?.colors || []);
+    const [selectedSizes, setSelectedSizes] = useState(dupStr?.sizes || []);
     
     // Variant pricing state: { [size]: { price, originalPrice } }
-    const [variantPrices, setVariantPrices] = useState({});
+    const [variantPrices, setVariantPrices] = useState(dupStr?.variants ? dupStr.variants.reduce((acc, v) => ({ ...acc, [v.size]: { price: v.price, originalPrice: v.originalPrice } }), {}) : {});
 
     // Dynamic Metadata State
     const [availableColors, setAvailableColors] = useState([]);
