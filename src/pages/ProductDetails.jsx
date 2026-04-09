@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { db } from '../firebase/config';
 import { doc, getDoc } from 'firebase/firestore';
 import { useCart } from '../context/CartContext';
+import ProductTimeline from '../components/ProductTimeline';
 
 const ProductDetails = () => {
     const { id } = useParams();
@@ -12,6 +13,8 @@ const ProductDetails = () => {
     const [loading, setLoading] = useState(true);
     const [selectedSize, setSelectedSize] = useState('');
     const [activeImageIndex, setActiveImageIndex] = useState(0);
+    const [categoryDetails, setCategoryDetails] = useState('');
+    const [showDetails, setShowDetails] = useState(true);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -30,6 +33,17 @@ const ProductDetails = () => {
                 }
             } catch (error) {
                 console.error("Error fetching product:", error);
+            }
+
+            try {
+                const catRef = doc(db, 'metadata', 'categories');
+                const catSnap = await getDoc(catRef);
+                if (catSnap.exists() && catSnap.data().items) {
+                    const categories = catSnap.data().items;
+                    setCategoryDetails(categories);
+                }
+            } catch (error) {
+                console.error("Error fetching categories:", error);
             } finally {
                 setLoading(false);
             }
@@ -141,8 +155,40 @@ const ProductDetails = () => {
                         }}>Buy It Now</button>
                     </div>
 
-                    <div className="product-description mt-4">
-                        <p>Experience the luxury of premium craftsmanship. Our carpets are meticulously handcrafted and machine-made to bring unparalleled elegance and style to any room. Made with the highest quality materials to ensure durability and a rich texture.</p>
+                    <ProductTimeline />
+
+                    <div className="product-details-accordion" style={{ marginTop: '15px' }}>
+                        <div 
+                            className="accordion-header" 
+                            onClick={() => setShowDetails(!showDetails)}
+                            style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', paddingBottom: '10px', borderBottom: '1px solid var(--border-color)', marginBottom: '15px' }}
+                        >
+                            <h3 style={{ margin: 0, fontSize: '1.2rem' }}>Product Details</h3>
+                            <span style={{ fontSize: '1.5rem', fontWeight: '300' }}>{showDetails ? '—' : '+'}</span>
+                        </div>
+                        {showDetails && (
+                            <div className="accordion-content">
+                                <ul style={{ paddingLeft: '20px', lineHeight: '1.6', color: 'var(--text-dark)' }}>
+                                    {(() => {
+                                        let detailsStr = '';
+                                        if (categoryDetails && Array.isArray(categoryDetails) && product.category) {
+                                            const cat = categoryDetails.find(c => c.name === product.category);
+                                            if (cat && cat.details) {
+                                                detailsStr = cat.details;
+                                            }
+                                        }
+                                        // Fallback if no specific details exist
+                                        if (!detailsStr) {
+                                            detailsStr = "Material: Crafted from 100% premium materials for ultra-soft comfort.\nCraftsmanship: Meticulously handcrafted to bring unparalleled elegance to any room.\nDurability: Made with the highest quality materials to ensure longevity and a rich texture.";
+                                        }
+
+                                        return detailsStr.split('\n').filter(line => line.trim() !== '').map((line, idx) => (
+                                            <li key={idx} style={{ marginBottom: '8px' }}>{line.trim()}</li>
+                                        ));
+                                    })()}
+                                </ul>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

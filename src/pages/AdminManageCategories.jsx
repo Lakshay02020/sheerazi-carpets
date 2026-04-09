@@ -17,6 +17,9 @@ const AdminManageCategories = () => {
     
     const [newName, setNewName] = useState('');
     const [newImageUrl, setNewImageUrl] = useState('');
+    const [newDetails, setNewDetails] = useState('');
+    const [editingDetailsIndex, setEditingDetailsIndex] = useState(null);
+    const [editDetailsValue, setEditDetailsValue] = useState('');
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -77,7 +80,7 @@ const AdminManageCategories = () => {
         e.preventDefault();
         if(!newName.trim() || !newImageUrl.trim()) return;
         
-        const newCat = { name: newName.trim(), url: newImageUrl };
+        const newCat = { name: newName.trim(), url: newImageUrl, details: newDetails.trim() };
         const updatedList = [...categories, newCat];
         
         try {
@@ -85,8 +88,21 @@ const AdminManageCategories = () => {
             setCategories(updatedList);
             setNewName('');
             setNewImageUrl('');
+            setNewDetails('');
         } catch (error) {
             console.error("Error saving category:", error);
+        }
+    };
+
+    const handleSaveDetails = async (index) => {
+        const updatedList = [...categories];
+        updatedList[index].details = editDetailsValue.trim();
+        try {
+            await updateDoc(doc(db, 'metadata', 'categories'), { items: updatedList });
+            setCategories(updatedList);
+            setEditingDetailsIndex(null);
+        } catch (error) {
+            console.error("Error saving details:", error);
         }
     };
 
@@ -119,6 +135,10 @@ const AdminManageCategories = () => {
                         <input required type="text" value={newName} onChange={e => setNewName(e.target.value)} className="form-control" placeholder="e.g. Vintage Collections" />
                     </div>
                     <div>
+                        <label>Product Details (Bullet points)*</label>
+                        <textarea required value={newDetails} onChange={e => setNewDetails(e.target.value)} className="form-control" rows="4" placeholder="Material: 100% Wool&#10;Backing: Canvas&#10;Comfort: Soft and plush"></textarea>
+                    </div>
+                    <div>
                         <label>Banner Image URL*</label>
                         <div style={{ display: 'flex', gap: '10px' }}>
                             <input required type="url" value={newImageUrl} onChange={e => setNewImageUrl(e.target.value)} className="form-control" style={{ marginTop: 0 }} placeholder="Paste a link or click Upload ->" />
@@ -146,21 +166,42 @@ const AdminManageCategories = () => {
                         </thead>
                         <tbody>
                             {categories.map((cat, idx) => (
-                                <tr key={idx} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                                <React.Fragment key={idx}>
+                                <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
                                     <td style={{ padding: '15px' }}>
                                         <img src={cat.url} alt={cat.name} style={{ width: '100px', height: '60px', objectFit: 'cover', borderRadius: '4px' }} />
                                     </td>
                                     <td style={{ padding: '15px', fontWeight: '500' }}>{cat.name}</td>
-                                    <td style={{ padding: '15px', textAlign: 'right', display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                                    <td style={{ padding: '15px', textAlign: 'right', display: 'flex', justifyContent: 'flex-end', gap: '10px', flexWrap: 'wrap' }}>
                                         <label className="btn" style={{ padding: '6px 12px', fontSize: '0.85rem', backgroundColor: '#1976d2', cursor: 'pointer', margin: 0, display: 'inline-flex', alignItems: 'center' }}>
                                             {uploadingIndex === idx ? 'Uploading...' : 'Edit Image'}
                                             <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageUpload(e.target.files[0], idx)} disabled={uploadingIndex === idx} />
                                         </label>
+                                        <button onClick={() => {
+                                            if (editingDetailsIndex === idx) {
+                                                setEditingDetailsIndex(null);
+                                            } else {
+                                                setEditingDetailsIndex(idx);
+                                                setEditDetailsValue(cat.details || '');
+                                            }
+                                        }} className="btn" style={{ padding: '6px 12px', fontSize: '0.85rem', backgroundColor: '#4caf50' }}>{editingDetailsIndex === idx ? 'Cancel' : 'Edit Details'}</button>
                                         <button onClick={() => handleDeleteCategory(idx)} className="btn" style={{ padding: '6px 12px', fontSize: '0.85rem', backgroundColor: '#e53935' }}>
                                             Delete
                                         </button>
                                     </td>
                                 </tr>
+                                {editingDetailsIndex === idx && (
+                                    <tr style={{ borderBottom: '1px solid var(--border-color)', backgroundColor: '#f9f9f9' }}>
+                                        <td colSpan="3" style={{ padding: '15px' }}>
+                                            <div>
+                                                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>Edit details for "{cat.name}" (Newline separated bullets)</label>
+                                                <textarea value={editDetailsValue} onChange={(e) => setEditDetailsValue(e.target.value)} className="form-control" rows="4"></textarea>
+                                                <button onClick={() => handleSaveDetails(idx)} className="btn" style={{ marginTop: '10px' }}>Save Details</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )}
+                                </React.Fragment>
                             ))}
                             {categories.length === 0 && (
                                 <tr><td colSpan="3" style={{ padding: '20px', textAlign: 'center' }}>No categories created yet.</td></tr>
