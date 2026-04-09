@@ -91,8 +91,30 @@ const ProductDetails = () => {
         });
     };
 
+    const jsonLd = {
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        "name": product.title,
+        "image": productImages,
+        "description": "Premium quality carpet from Fine and Art Carpets",
+        "sku": product.id,
+        "offers": {
+            "@type": "Offer",
+            "url": window.location.href,
+            "priceCurrency": "INR",
+            "price": displayPrice || 0,
+            "itemCondition": "https://schema.org/NewCondition",
+            "availability": "https://schema.org/InStock",
+            "seller": {
+                "@type": "Organization",
+                "name": "Fine and Art Carpets"
+            }
+        }
+    };
+
     return (
         <div className="product-details container py-60">
+            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
             <div className="product-layout">
                 <div className="product-image-section">
                     <div className="main-image-container">
