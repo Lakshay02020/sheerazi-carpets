@@ -76,6 +76,20 @@ const ProductTimeline = () => {
                     <div style={{ background: 'white', borderRadius: '20px', padding: '2px 10px', color: '#ea4335', fontWeight: 'bold', fontSize: '0.75rem', display: 'flex', alignItems: 'center', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>GPay</div>
                 </div>
             </div>
+
+            {/* Return & Exchange Banner */}
+            <div style={{ marginTop: '15px', backgroundColor: '#f8f9fa', border: '1px solid #dee2e6', borderRadius: '8px', padding: '12px 20px', display: 'flex', alignItems: 'center', gap: '15px', color: '#333' }}>
+                <div style={{ backgroundColor: '#e9ecef', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                        <path d="M3 3v5h5" />
+                    </svg>
+                </div>
+                <div>
+                    <div style={{ fontWeight: 'bold', fontSize: '0.95rem' }}>Returns & Exchanges Available</div>
+                    <div style={{ fontSize: '0.85rem', color: '#666' }}>Hassle-free 7-day return policy for your peace of mind.</div>
+                </div>
+            </div>
         </div>
     );
 };

@@ -198,9 +198,24 @@ const Checkout = () => {
                     ))}
                 </div>
                 <div className="summary-totals">
-                    <div className="summary-row"><span>Subtotal:</span><span>₹{cartTotal.toFixed(2)}</span></div>
-                    <div className="summary-row"><span>Shipping:</span><span>Free</span></div>
-                    <div className="summary-row total"><span>Total:</span><span>₹{cartTotal.toFixed(2)}</span></div>
+                    <div className="summary-row">
+                        <span>Subtotal</span>
+                        <span>₹{cartTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    </div>
+                    <div className="summary-row">
+                        <span>Shipping</span>
+                        <span>Enter shipping address</span>
+                    </div>
+                    <div className="summary-row total-header">
+                        <span>Total</span>
+                    </div>
+                    <div className="summary-row total-amount">
+                        <span className="currency">INR</span>
+                        <span className="amount">₹{cartTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    </div>
+                    <div className="summary-tax">
+                        Including ₹{(cartTotal - (cartTotal / 1.05)).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} in taxes
+                    </div>
                 </div>
             </div>
 
@@ -219,8 +234,12 @@ const Checkout = () => {
         .summary-item-info .size { font-size: 0.8rem; color: var(--text-light); }
         .summary-item-price { font-weight: 500; }
         .summary-totals { padding-top: 15px; }
-        .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
-        .summary-row.total { font-weight: bold; font-size: 1.2rem; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color); color: var(--primary); }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; color: var(--text-dark); }
+        .summary-row.total-header { margin-top: 20px; font-weight: 600; font-size: 1.1rem; margin-bottom: 5px; }
+        .summary-row.total-amount { display: flex; align-items: baseline; justify-content: flex-start; gap: 10px; margin-bottom: 5px; }
+        .summary-row.total-amount .currency { font-size: 0.9rem; color: var(--text-light); }
+        .summary-row.total-amount .amount { font-size: 1.8rem; font-weight: bold; color: var(--text-dark); }
+        .summary-tax { font-size: 0.85rem; color: var(--text-light); }
         .mt-4 { margin-top: 25px; }
         .py-60 { padding-top: 60px; padding-bottom: 60px; }
       `}</style>
