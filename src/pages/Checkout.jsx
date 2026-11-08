@@ -77,7 +77,7 @@ const Checkout = () => {
 
             // 2. Open Razorpay Checkout for REAL keys
             const options = {
-                key: "rzp_test_SWAjuCC264eUtf", // Replace when ready
+                key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_live_Txak06k5wHimqp",
                 amount: data.amount,
                 currency: data.currency,
                 name: "Fine and art carpets",
