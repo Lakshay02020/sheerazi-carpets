@@ -2,7 +2,7 @@ import React from 'react';
 
 const AnnouncementBanner = () => {
     const announcements = [
-        "Get In Touch with Our Sales Agent : +91 0000000000",
+        "Get In Touch with Our Sales Agent : +91 9889747766",
         "Customisation Available",
         "Additional 10% Off On Prepaid Orders",
         "Get 50% Off On All Products",

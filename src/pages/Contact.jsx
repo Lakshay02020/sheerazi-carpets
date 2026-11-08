@@ -35,12 +35,16 @@ const Contact = () => {
                             <MapPin size={24} color="var(--primary)" />
                         </div>
                         <div>
-                            <h4 style={{ margin: '0 0 8px 0', fontSize: '1.1rem' }}>Visit Our Showroom</h4>
+                            <h4 style={{ margin: '0 0 8px 0', fontSize: '1.1rem' }}>Registered Office & Workshop</h4>
                             <p style={{ margin: 0, color: '#555', lineHeight: '1.6' }}>
-                                Fine and Art Carpets HQ<br />
-                                123 Artisan Street, Carpet District<br />
-                                Bhadohi, Uttar Pradesh, 221401<br />
+                                Fine and Art Carpets<br />
+                                Sheerazi House 123, Madhosingh Baazar<br />
+                                Aurai, Bhadohi, Uttar Pradesh - 221301<br />
                                 India
+
+
+
+
                             </p>
                         </div>
                     </div>
@@ -52,8 +56,9 @@ const Contact = () => {
                         <div>
                             <h4 style={{ margin: '0 0 8px 0', fontSize: '1.1rem' }}>Call Us</h4>
                             <p style={{ margin: 0, color: '#555', lineHeight: '1.6' }}>
-                                Support: +91 98765 43210<br />
-                                Wholesale: +91 12345 67890
+                                Support: <a href="tel:+919889747766" style={{ color: 'inherit', textDecoration: 'none' }}>+91 9889747766</a><br />
+                                Orders & Inquiries: <a href="tel:+919889747766" style={{ color: 'inherit', textDecoration: 'none' }}>+91 9889747766</a>
+
                             </p>
                         </div>
                     </div>
@@ -65,8 +70,8 @@ const Contact = () => {
                         <div>
                             <h4 style={{ margin: '0 0 8px 0', fontSize: '1.1rem' }}>Email Us</h4>
                             <p style={{ margin: 0, color: '#555', lineHeight: '1.6' }}>
-                                care@fineandartcarpets.com<br />
-                                sales@fineandartcarpets.com
+                                <a href="mailto:fineandarts96@gmail.com" style={{ color: 'inherit', textDecoration: 'none' }}>fineandarts96@gmail.com</a>
+
                             </p>
                         </div>
                     </div>
