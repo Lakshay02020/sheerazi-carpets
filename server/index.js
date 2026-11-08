@@ -25,7 +25,7 @@ app.post('/create-order', async (req, res) => {
     const { amount, currency = "INR" } = req.body;
     
     // If the user hasn't added their real keys yet, mock a response so testing the UI doesn't crash 
-    if (process.env.RAZORPAY_KEY_ID === 'rzp_test_placeholder_key_id') {
+    if (!process.env.RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID.includes('placeholder')) {
       console.log("Using Mock Razorpay Mode. Send real keys to use the real API.");
       return res.json({
         id: "order_mock_" + Math.floor(Math.random() * 100000),
